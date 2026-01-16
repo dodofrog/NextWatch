@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+    <h1> NextWatch </h1>
+
+    <h2> Movies </h2>
+        <table>
+            <tr> <th>Title</th> <th>Actions</th> </tr>
+
+            {% for item in movie_list %}
+            <tr>
+                <td>{{ item[1] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                        <button type="submit"> Delete </button>
+                    </form>
+
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
+        </table>
+
+    <h2> TV Shows </h2>
+        <table>
+            <tr> <th>Title</th> <th>Actions</th>  </tr>
+
+            {% for item in tv_show_list %}
+            <tr>
+                <td>{{ item[1] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                        <button type="submit"> Delete </button>
+                    </form>
+
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <tr> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
+        </table>
+
+    <h2> Anime </h2>
+        <table>
+            <tr> <th>Title</th> <th>Actions</th>  </tr>
+
+            {% for item in anime_list %}
+            <tr>
+                <td>{{ item[1] }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                        <button type="submit"> Delete </button>
+                    </form>
+
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
+        </table>
+
+    <div id="edit_overlay">
+        <div id="edit_modal">
+            <form id="editForm" method="POST">
+                <label for="new_name">New Name: </label> <br>
+                <input id="new_name" type="text" name="title"> <br>
+                <button id="edit_submit" type="submit">Save</button>
+                <button id="edit_cancel" type="button">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="add_overlay">
+        <div id="add_modal">
+            <form id="addForm" method="POST">
+                <label for="add_name">Name: </label> <br>
+                <input id="add_name" type="text" name="title"> <br>
+                <button id="add_submit" type="submit">Add</button>
+                <button id="add_cancel" type="button">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
