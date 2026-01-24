@@ -65,24 +65,27 @@
             <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
         </table>
 
-    <div id="edit_overlay">
-        <div id="edit_modal">
+    <div id="add_overlay" class="overlay">
+        <div id="add_modal" class="modal">
+            <form id="addForm" method="POST" autocomplete="off">
+                <div class="autocomplete">
+                    <label for="add_name">Name: </label> <br>
+                    <input id="add_name" type="text" name="title"> <br>
+                    <ul id="autocomplete_list"></ul>
+                </div>
+                <button id="add_submit" type="submit">Add</button>
+                <button id="add_cancel" type="button">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit_overlay" class="overlay">
+        <div id="edit_modal" class="modal">
             <form id="editForm" method="POST">
                 <label for="new_name">New Name: </label> <br>
                 <input id="new_name" type="text" name="title"> <br>
                 <button id="edit_submit" type="submit">Save</button>
                 <button id="edit_cancel" type="button">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="add_overlay">
-        <div id="add_modal">
-            <form id="addForm" method="POST">
-                <label for="add_name">Name: </label> <br>
-                <input id="add_name" type="text" name="title"> <br>
-                <button id="add_submit" type="submit">Add</button>
-                <button id="add_cancel" type="button">Cancel</button>
             </form>
         </div>
     </div>

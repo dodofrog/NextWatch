@@ -23,6 +23,8 @@ table, th, td {
     top: 50%;
     left: 50%;
     background-color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
 }
 
 #add_overlay{
@@ -45,4 +47,47 @@ table, th, td {
     top: 50%;
     left: 50%;
     background-color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
+/* List itself `*/
+#autocomplete_list {
+    position: absolute;
+    top: 100%; /* right below the input */
+    left: 0;
+    width: 100%;
+    max-height: 200px; /* makes it scrollable if too many items */
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    z-index: 1000;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Each result item */
+#autocomplete_list li {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Image in each result (poster) */
+#autocomplete_list li img {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+/* Hover effect */
+#autocomplete_list li:hover {
+    background-color: #f0f0f0;
 }
