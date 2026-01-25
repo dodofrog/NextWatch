@@ -1,166 +1,113 @@
 // Allows add/edit buttons to work
-document.addEventListener("click", openEditForm);
-document.addEventListener("click", openAddForm);
+document.addEventListener("click", openActionForm);
 
 // Allows esc to close overlays
 document.addEventListener("keydown", close_overlay_on_esc)
 
 // Turns overlay off if add/edit is cancelled
-document.getElementById("edit_cancel").addEventListener("click", edit_overlay_off);
-document.getElementById("add_cancel").addEventListener("click", add_overlay_off);
+document.getElementById("action_cancel").addEventListener("click", action_overlay_off);
 
 let overlayOpen = false;
 
-// --------- Opens respective form ---------
-function openEditForm(event) {
+// Opens add/edit form
+function openActionForm(event) {
     const editBtn = event.target.closest(".edit_button");
-    if (!editBtn) return;
-
-    edit_overlay_on();
-    edit_pass_id({ target: editBtn });
-    document.getElementById("new_name").focus();
-}
-
-function openAddForm(event) {
     const addBtn = event.target.closest(".add_button");
-    if (!addBtn) return;
-
-    add_overlay_on();
-    add_type({ target: addBtn });
-    document.getElementById("add_name").focus();
-}
-
-// --------- Toggles overlays ---------
-function close_overlay_on_esc (event) {
-    if(event.key === "Escape" && overlayOpen) {
-        edit_overlay_off();
-        add_overlay_off();
+    if (addBtn) {
+        action_type = addBtn.dataset.action_type;
+        action_overlay_on();
+        add_type({ target: addBtn });
+        document.getElementById("new_name").focus();
     }
+    else if (editBtn) {
+        action_overlay_on();
+        edit_pass_id({ target: editBtn });
+        document.getElementById("new_name").focus();
+    }
+    else return;
 }
 
-function edit_overlay_on() {
-    document.getElementById("edit_overlay").style.display = "block";
+// Toggles overlays
+function action_overlay_on() {
+    document.getElementById("action_overlay").style.display = "block";
     document.getElementById("new_name").value = "";
     overlayOpen = true;
 }
 
-function edit_overlay_off() {
-    document.getElementById("edit_overlay").style.display = "none";
+function action_overlay_off() {
+    document.getElementById("action_overlay").style.display = "none";
     clearAutocomplete();
     overlayOpen = false;
 }
 
-function add_overlay_on() {
-    document.getElementById("add_overlay").style.display = "block";
-    document.getElementById("add_name").value = "";
-    overlayOpen = true;
+function close_overlay_on_esc (event) {
+    if(event.key === "Escape" && overlayOpen) action_overlay_off();
 }
 
-function add_overlay_off() {
-    document.getElementById("add_overlay").style.display = "none";
-    clearAutocomplete();
-    overlayOpen = false;
-}
-
-// Passes ID number from edit button to edit form
+// Assigns edit action for action form
 function edit_pass_id(event) {
     const id = event.target.dataset.idNum;
     const type = event.target.dataset.type;
 
-    document.getElementById("editForm").action = `/edit/${id}`;
-    document.getElementById("editForm").dataset.type = type;
+    document.getElementById("actionForm").action = `/edit/${id}`;
+    document.getElementById("actionForm").dataset.type = type;
 }
 
-// Passes data type (movie/tv_show/anime) to add form
+// Assigns add action for action form
 function add_type(event) {
     const type = event.target.dataset.type;
 
-    document.getElementById("addForm").action = `/add_${type}`;
-    document.getElementById("addForm").dataset.type = type;
+    document.getElementById("actionForm").action = `/add_${type}`;
+    document.getElementById("actionForm").dataset.type = type;
 }
 
 /*
  * AUTOCOMPLETE SEARCH
  */
 
-const add_form = document.getElementById("addForm");
-const add_name = document.getElementById("add_name");
-const edit_form = document.getElementById("editForm");
-const edit_name = document.getElementById("new_name");
-const add_autocomplete_list = document.getElementById("add_autocomplete_list");
-const edit_autocomplete_list = document.getElementById("edit_autocomplete_list");
+const action_form = document.getElementById("actionForm");
+const new_name = document.getElementById("new_name");
+const action_autocomplete_list = document.getElementById("action_autocomplete_list");
 
 let search_timer = null;
 
 // Listens to the add_form
-add_name.addEventListener("input", function () {
-    const query = add_name.value.trim();
+new_name.addEventListener("input", function () {
+    const query = new_name.value.trim();
 
-    if (search_timer) clearTimeout(search_timer);
+    if (search_timer) clearTimeout(search_timer);   // Clears old timer if exists
 
-    if (query.length < 4) {
-        add_autocomplete_list.innerHTML = "";
+    if (query.length < 4) {                         // Ignores queries of length < 4
+        action_autocomplete_list.innerHTML = "";
         return;
     }
 
-    search_timer = setTimeout(() => {
-        fetchResults(query, add_form, add_name, add_autocomplete_list);
+    search_timer = setTimeout(() => {               // Sets new timer for when to fetchResults
+        fetchResults(query);
     }, 300);
 });
 
-// Listens to the edit form
-edit_name.addEventListener("input", function () {
-    const query = edit_name.value.trim();
-
-    if (search_timer) clearTimeout(search_timer);
-
-    if (query.length < 4) {
-        edit_autocomplete_list.innerHTML = "";
-        return;
-    }
-
-    search_timer = setTimeout(() => {
-        fetchResults(query, edit_form, edit_name, edit_autocomplete_list);
-    }, 300);
-});
-
-
-async function fetchResults(query, input_form, input_box, autocomplete_list) {
-    let type = input_form.dataset.type.split("_").pop();
+async function fetchResults(query) {
+    let type = action_form.dataset.type.split("_").pop();   // Gets type for correct url later
 
     if ((type == "show") || (type == "anime")) type = "series";
     type.trim();
 
-    if(type == "movie"){
-        try {
-        const response = await fetch(`/search_movie?q=${encodeURIComponent(query)}`);
+    try {                                                   // Requests flask to request results from OMDB
+        const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        renderResults(data, input_form, input_box, autocomplete_list);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    if(type == "series"){
-        try {
-        const response = await fetch(`/search_series?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        renderResults(data, input_form, input_box, autocomplete_list);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
+        renderResults(data);
+    } catch (err) { console.error(err); }
 
 }
 
-function renderResults(results, input_form, input_box, autocomplete_list) {
-    autocomplete_list.innerHTML = "";
+function renderResults(results) {
+    action_autocomplete_list.innerHTML = "";
 
-    results.forEach(item => {
+    results.forEach(item => {                       // Creates element for each result
         const li = document.createElement("li");
 
-        // image
+        // poster
         const img = document.createElement("img");
         img.src = item.poster;
 
@@ -172,22 +119,21 @@ function renderResults(results, input_form, input_box, autocomplete_list) {
         li.appendChild(text);
 
         li.addEventListener("click", () => {
-            input_box.value = item.title;
-            autocomplete_list.innerHTML = "";
+            new_name.value = item.title;
+            action_autocomplete_list.innerHTML = "";
 
-            let action = input_form.action;
+            let action = action_form.action;            // Allows clicking a result to autofill and submit form
             action += `?imdbID=${item.imdbID}`
-            input_form.action = action;
+            action_form.action = action;
 
-            input_form.submit();
+            action_form.submit();
         });
 
-        autocomplete_list.appendChild(li);
+        action_autocomplete_list.appendChild(li);
     })
-
 }
 
+// Clears autocomplete list
 function clearAutocomplete() {
-    add_autocomplete_list.innerHTML = "";
-    edit_autocomplete_list.innerHTML = "";
+    action_autocomplete_list.innerHTML = "";
 }
