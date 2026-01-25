@@ -1,11 +1,20 @@
-// Allows add/edit buttons to work
+// Allows add/edit/more info buttons to work
 document.addEventListener("click", openActionForm);
+document.addEventListener("click", openMoreInfo);
 
 // Allows esc to close overlays
 document.addEventListener("keydown", close_overlay_on_esc)
 
 // Turns overlay off if add/edit is cancelled
-document.getElementById("action_cancel").addEventListener("click", action_overlay_off);
+document.getElementById("action_cancel").addEventListener("click", all_overlay_off);
+
+// Allows x button to work for info overlay
+document.addEventListener("click", (event) => {
+    const closeBtn = event.target.closest(".close_button");
+    if (!closeBtn) return;
+
+    all_overlay_off();
+})
 
 let overlayOpen = false;
 
@@ -14,7 +23,6 @@ function openActionForm(event) {
     const editBtn = event.target.closest(".edit_button");
     const addBtn = event.target.closest(".add_button");
     if (addBtn) {
-        action_type = addBtn.dataset.action_type;
         action_overlay_on();
         add_type({ target: addBtn });
         document.getElementById("new_name").focus();
@@ -27,21 +35,42 @@ function openActionForm(event) {
     else return;
 }
 
+// Open more info tab
+function openMoreInfo(event) {
+    const moreInfoBtn = event.target.closest(".more_button");
+    if (!moreInfoBtn) return;
+
+    more_info_overlay_on();
+    getItemInfo({ target:moreInfoBtn });
+}
+
+function getItemInfo(event) {
+    const imdbID = event.target.dataset.imdbid;
+
+
+}
+
 // Toggles overlays
 function action_overlay_on() {
-    document.getElementById("action_overlay").style.display = "block";
+    document.getElementById("action_overlay").style.display = "flex";
     document.getElementById("new_name").value = "";
     overlayOpen = true;
 }
 
-function action_overlay_off() {
+function more_info_overlay_on() {
+    document.getElementById("more_info_overlay").style.display = "flex";
+    overlayOpen = true;
+}
+
+function all_overlay_off() {
     document.getElementById("action_overlay").style.display = "none";
+    document.getElementById("more_info_overlay").style.display = "none";
     clearAutocomplete();
     overlayOpen = false;
 }
 
 function close_overlay_on_esc (event) {
-    if(event.key === "Escape" && overlayOpen) action_overlay_off();
+    if(event.key === "Escape" && overlayOpen) all_overlay_off();
 }
 
 // Assigns edit action for action form
@@ -56,7 +85,6 @@ function edit_pass_id(event) {
 // Assigns add action for action form
 function add_type(event) {
     const type = event.target.dataset.type;
-
     document.getElementById("actionForm").action = `/add_${type}`;
     document.getElementById("actionForm").dataset.type = type;
 }
@@ -77,7 +105,7 @@ new_name.addEventListener("input", function () {
 
     if (search_timer) clearTimeout(search_timer);   // Clears old timer if exists
 
-    if (query.length < 4) {                         // Ignores queries of length < 4
+    if (query.length < 3) {                         // Ignores queries of length < 3
         action_autocomplete_list.innerHTML = "";
         return;
     }
@@ -131,6 +159,8 @@ function renderResults(results) {
 
         action_autocomplete_list.appendChild(li);
     })
+
+
 }
 
 // Clears autocomplete list

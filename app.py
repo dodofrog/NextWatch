@@ -21,7 +21,7 @@ def search_movie():
     query = request.args.get("q", "").strip()
 
     if not query:
-        return jsonify(["not query"])
+        return jsonify([])
 
     response = requests.get(f"{base_url}s={query}&type=movie", timeout=5)
     data = response.json()
@@ -69,6 +69,22 @@ def search_series():
         })
 
     return jsonify(results)
+
+@app.route('/search_imdbid')
+def search_imdbid():
+    imdbid = request.args.get("q", "").strip()
+    if not imdbid: return jsonify([])
+
+    response = requests.get(f"{base_url}i={imdbid}", timeout=5)
+    data = response.json()
+
+    if not (response.status_code == 200):
+        return jsonify([])
+
+    if data.get("Response") == "False":
+        return jsonify([])
+
+
 
 @app.route('/')
 def index():

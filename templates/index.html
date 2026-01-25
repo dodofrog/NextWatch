@@ -19,7 +19,7 @@
                         </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="movie" data-action-type="edit">
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="movie">
                         <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                     </button>
 
@@ -30,7 +30,7 @@
             </tr>
             {% endfor %}
 
-            <tr> <td> <button type="button" class="add_button" data-type="movie" data-action-type="add">+</button> </td> </tr>
+            <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
         </table>
 
     <h2> TV Shows </h2>
@@ -89,8 +89,8 @@
             <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
         </table>
 
-    <div id="action_overlay">
-        <div id="action_modal" data-action-type="">
+    <div id="action_overlay" class="overlay">
+        <div id="action_modal">
             <form id="actionForm" method="POST" autocomplete="off">
                 <div class="autocomplete">
                     <label for="new_name">New Title: </label> <br>
@@ -100,6 +100,20 @@
                 <button id="action_submit" type="submit">Save</button>
                 <button id="action_cancel" type="button">Cancel</button>
             </form>
+        </div>
+    </div>
+
+    <div id="more_info_overlay" class="overlay">
+        <div class="info_modal">
+            <button class="close_button">
+                <img src="{{ url_for('static', filename='icons/xIcon.png') }}" class="close_image">
+            </button>
+            <div id="more_info_modal_left">
+                Poster part
+            </div>
+            <div id="more_info_modal_right">
+                Other Part
+            </div>
         </div>
     </div>
 

@@ -3,7 +3,7 @@ table, th, td {
     border-collapse:collapse;
 }
 
-#action_overlay{
+.overlay {
     position: fixed;
     display: none;
     width: 100%;
@@ -14,15 +14,18 @@ table, th, td {
     bottom: 0;
     background-color: rgba(0,0,0,0.5);
     z-index: 2;
-    cursor: pointer;
+    justify-content: center;
+    align-items: center;
 }
 
-#action_modal{
+#action_modal {
     position: absolute;
     display: block;
     top: 50%;
     left: 50%;
+    padding: 10px;
     background-color: white;
+    border-radius: 4px;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
 }
@@ -51,7 +54,7 @@ table, th, td {
     align-items: center;
     padding: 6px 10px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s;
 }
 
 /* Image in each result (poster) */
@@ -66,6 +69,10 @@ table, th, td {
 /* Hover effect */
 .autocomplete_list li:hover {
     background-color: #f0f0f0;
+}
+
+.autocomplete_list li.active {
+    background-color: #e0e0e0;
 }
 
 .action_images {
@@ -83,8 +90,53 @@ table, th, td {
     width: 30px;
     height: 20px;
     background-color: #dedede;
+    transition: background-color 0.2s;
 }
 
 .delete_button:hover, .edit_button:hover, .more_button:hover, .add_button:hover{
     background-color: #c2c2c2;
+}
+
+
+/* More Info Overlay */
+
+.info_modal {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: #b0b0b0;
+    width: 1000px;
+}
+
+#more_info_modal_left, #more_info_modal_right {
+    background-color: #f2f1e3;
+    margin: 10px;
+    padding: 20px;
+    font-size: 24px;
+}
+
+.more_button:focus {
+    outline: none;
+}
+
+.close_button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    height: 15px;
+    width: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+}
+
+.close_image {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
 }
