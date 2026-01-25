@@ -14,10 +14,18 @@
                 <td>{{ item[1] }}</td>
                 <td>
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit"> Delete </button>
+                        <button type="submit" class="delete_button">
+                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                        </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="movie">
+                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
+                    </button>
+
+                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -34,10 +42,18 @@
                 <td>{{ item[1] }}</td>
                 <td>
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit"> Delete </button>
+                        <button type="submit" class="delete_button">
+                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                        </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="tv_show">
+                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
+                    </button>
+
+                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -54,10 +70,18 @@
                 <td>{{ item[1] }}</td>
                 <td>
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit"> Delete </button>
+                        <button type="submit" class="delete_button">
+                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                        </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}">Edit</button>
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="anime">
+                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
+                    </button>
+
+                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
+                    </button>
                 </td>
             </tr>
             {% endfor %}
@@ -71,7 +95,7 @@
                 <div class="autocomplete">
                     <label for="add_name">Name: </label> <br>
                     <input id="add_name" type="text" name="title"> <br>
-                    <ul id="autocomplete_list"></ul>
+                    <ul id="add_autocomplete_list" class="autocomplete_list"></ul>
                 </div>
                 <button id="add_submit" type="submit">Add</button>
                 <button id="add_cancel" type="button">Cancel</button>
@@ -82,8 +106,11 @@
     <div id="edit_overlay" class="overlay">
         <div id="edit_modal" class="modal">
             <form id="editForm" method="POST">
-                <label for="new_name">New Name: </label> <br>
-                <input id="new_name" type="text" name="title"> <br>
+                <div class="autocomplete">
+                    <label for="new_name">New Name: </label> <br>
+                    <input id="new_name" type="text" name="title"> <br>
+                    <ul id="edit_autocomplete_list" class="autocomplete_list"></ul>
+                </div>
                 <button id="edit_submit" type="submit">Save</button>
                 <button id="edit_cancel" type="button">Cancel</button>
             </form>

@@ -48,16 +48,16 @@ def search_series():
     query = request.args.get("q", "").strip()
 
     if not query:
-        return jsonify(["not query"])
+        return jsonify([])
 
     response = requests.get(f"{base_url}s={query}&type=series", timeout=5)
     data = response.json()
 
     if not (response.status_code == 200):
-        return jsonify(["status code not 200"])
+        return jsonify([])
 
     if data.get("Response") == "False":
-        return jsonify(data)
+        return jsonify([])
 
     results = []
     for item in data.get("Search", [])[:5]:
@@ -84,20 +84,38 @@ def index():
 
 @app.route('/add_movie', methods=['POST'])
 def add_movie():
+    imdbid = request.args.get("imdbID", "").strip()
     movie_title = request.form.get("title")
-    database.add_movie(movie_title)
+
+    if not imdbid:
+        database.add_movie(movie_title)
+    else:
+        database.add_movie(movie_title, imdbid)
+
     return redirect(url_for('index'))
 
 @app.route('/add_tv_show', methods=['POST'])
 def add_tv_show():
+    imdbid = request.args.get("imdbID", "").strip()
     tv_show_title = request.form.get("title")
-    database.add_tv_show(tv_show_title)
+
+    if not imdbid:
+        database.add_tv_show(tv_show_title)
+    else:
+        database.add_tv_show(tv_show_title, imdbid)
+
     return redirect(url_for('index'))
 
 @app.route('/add_anime', methods=['POST'])
 def add_anime():
+    imdbid = request.args.get("imdbID", "").strip()
     anime_title = request.form.get("title")
-    database.add_anime(anime_title)
+
+    if not imdbid:
+        database.add_anime(anime_title)
+    else:
+        database.add_anime(anime_title, imdbid)
+
     return redirect(url_for('index'))
 
 @app.route('/delete/<int:id_num>', methods=['POST'])

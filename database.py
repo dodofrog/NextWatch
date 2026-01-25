@@ -1,48 +1,69 @@
 # Imports
-import sqlite3
+import sqlite3, os
 
 
 # Creates db
 def init_db():
     with get_connection() as con:
         cur = con.cursor()
+
         cur.execute("""
             CREATE TABLE IF NOT EXISTS media (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
-                type TEXT NOT NULL
+                type TEXT NOT NULL,
+                imdbID TEXT UNIQUE
             )
         """)
 
 # Database Connection
 def get_connection():
-    con = sqlite3.connect('database.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'database.db')
+    con = sqlite3.connect(db_path)
     return con
 
 # CREATE
-def add_movie(item_name):
+def add_movie(*args):
     with get_connection() as con:
         cur = con.cursor()
-        cur.execute(
-            "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
-            (item_name, "movie")
-        )
+        if len(args) == 1:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
+                (args[0], "movie")
+            )
+        elif len(args) == 2:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (imdbID, name, type) VALUES (?, ?, ?)",
+                (args[1], args[0], "movie")
+            )
 
-def add_tv_show(item_name):
+def add_tv_show(*args):
     with get_connection() as con:
         cur = con.cursor()
-        cur.execute(
-            "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
-            (item_name, "tv_show")
-        )
+        if len(args) == 1:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
+                (args[0], "tv_show")
+            )
+        elif len(args) == 2:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (imdbID, name, type) VALUES (?, ?, ?)",
+                (args[1], args[0], "tv_show")
+            )
 
-def add_anime(item_name):
+def add_anime(*args):
     with get_connection() as con:
         cur = con.cursor()
-        cur.execute(
-            "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
-            (item_name, "anime")
-        )
+        if len(args) == 1:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (name, type) VALUES (?, ?)",
+                (args[0], "anime")
+            )
+        elif len(args) == 2:
+            cur.execute(
+                "INSERT OR IGNORE INTO media (imdbID, name, type) VALUES (?, ?, ?)",
+                (args[1], args[0], "anime")
+            )
 
 # READ
 def get_all_movies():

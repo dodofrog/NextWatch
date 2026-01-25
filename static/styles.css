@@ -52,7 +52,7 @@ table, th, td {
 }
 
 /* List itself `*/
-#autocomplete_list {
+.autocomplete_list {
     position: absolute;
     top: 100%; /* right below the input */
     left: 0;
@@ -70,7 +70,7 @@ table, th, td {
 }
 
 /* Each result item */
-#autocomplete_list li {
+.autocomplete_list li {
     display: flex;
     align-items: center;
     padding: 6px 10px;
@@ -79,7 +79,7 @@ table, th, td {
 }
 
 /* Image in each result (poster) */
-#autocomplete_list li img {
+.autocomplete_list li img {
     width: 40px;
     height: 60px;
     object-fit: cover;
@@ -88,6 +88,27 @@ table, th, td {
 }
 
 /* Hover effect */
-#autocomplete_list li:hover {
+.autocomplete_list li:hover {
     background-color: #f0f0f0;
+}
+
+.action_images {
+    border: none;
+    cursor: pointer;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+}
+
+.delete_button, .edit_button, .more_button, .add_button {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 20px;
+    background-color: #dedede;
+}
+
+.delete_button:hover, .edit_button:hover, .more_button:hover, .add_button:hover{
+    background-color: #c2c2c2;
 }
