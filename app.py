@@ -87,7 +87,6 @@ def search_imdbid():
     result = {
         "title": data.get("Title"),
         "year": data.get("Year"),
-        "rating": data.get("Rating"),
         "runtime": data.get("Runtime"),
         "genre": data.get("Genre"),
         "director": data.get("Director"),
@@ -113,7 +112,7 @@ def index():
 
 @app.route('/add_movie', methods=['POST'])
 def add_movie():
-    imdbid = request.args.get("imdbID", "").strip()
+    imdbid = request.args.get("i", "").strip()
     movie_title = request.form.get("title")
 
     if not imdbid:

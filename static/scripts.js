@@ -18,6 +18,8 @@ document.addEventListener("click", (event) => {
 
 let overlayOpen = false;
 
+const omdb_cache = {};
+
 // Opens add/edit form
 function openActionForm(event) {
     const editBtn = event.target.closest(".edit_button");
@@ -47,10 +49,17 @@ function openMoreInfo(event) {
 async function getItemInfo(event) {
     const imdbID = event.target.dataset.imdbid;
 
+    if (omdb_cache[imdbID]) {
+        renderMoreInfo(omdb_cache[imdbID]);
+        return;
+    }
+
     try {
         const response = await fetch(`/search_imdbid?i=${imdbID}`);
         const data = await response.json();
-        console.log(data);
+
+        omdb_cache[imdbID] = data;
+
         renderMoreInfo(data);
     } catch (err) { console.error(err); }
 }
@@ -61,13 +70,66 @@ function renderMoreInfo(result) {
     left.innerHTML = "";
     right.innerHTML = "";
 
+    // poster
     const img = document.createElement("img");
     img.src = result.poster;
 
-    const title_span = document.createElement("span");
-    title_span.textContent = result.title;
+    // title
+    const title = document.createElement("span");
+    title.textContent = `${result.title} | `;
 
+    // year
+    const year = document.createElement("span");
+    year.textContent = result.year;
 
+    // actors
+    const actors = document.createElement("span");
+    actors.textContent = `Actors: ${result.actors}`;
+
+    // director
+    const director = document.createElement("span");
+    director.textContent = `Director: ${result.director}`;
+
+    // genres
+    const genres = document.createElement("span");
+    genres.textContent = `Genres: ${result.genre}`;
+
+    // plot
+    const plot = document.createElement("span");
+    plot.textContent = `Plot: ${result.plot}`;
+
+    // runtime
+    const runtime = document.createElement("span");
+    runtime.textContent = `Runtime: ${result.runtime}`;
+
+    // writer
+    const writers = document.createElement("span");
+    writers.textContent = `Writers: ${result.writer}`;
+
+    // left side
+    left.appendChild(img);
+    left.appendChild(document.createElement("br"));
+    left.appendChild(title);
+    left.appendChild(year);
+
+    // right side
+    right.appendChild(plot);
+    right.appendChild(document.createElement("br"));
+    right.appendChild(document.createElement("br"));
+    right.appendChild(director);
+    right.appendChild(document.createElement("br"));
+    right.appendChild(document.createElement("br"));
+    right.appendChild(writers);
+    right.appendChild(document.createElement("br"));
+    right.appendChild(document.createElement("br"));
+    right.appendChild(actors);
+    right.appendChild(document.createElement("br"));
+    right.appendChild(document.createElement("br"));
+    right.appendChild(runtime);
+    right.appendChild(document.createElement("br"));
+    right.appendChild(document.createElement("br"));
+    right.appendChild(genres);
+    right.appendChild(document.createElement("br"));
 }
 
 // Toggles overlays
@@ -79,6 +141,8 @@ function action_overlay_on() {
 
 function more_info_overlay_on() {
     document.getElementById("more_info_overlay").style.display = "flex";
+    document.getElementById("more_info_modal_left").innerHTML = "";
+    document.getElementById("more_info_modal_right").innerHTML = "";
     overlayOpen = true;
 }
 
