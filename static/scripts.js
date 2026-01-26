@@ -44,8 +44,28 @@ function openMoreInfo(event) {
     getItemInfo({ target:moreInfoBtn });
 }
 
-function getItemInfo(event) {
+async function getItemInfo(event) {
     const imdbID = event.target.dataset.imdbid;
+
+    try {
+        const response = await fetch(`/search_imdbid?i=${imdbID}`);
+        const data = await response.json();
+        console.log(data);
+        renderMoreInfo(data);
+    } catch (err) { console.error(err); }
+}
+
+function renderMoreInfo(result) {
+    const left = document.getElementById("more_info_modal_left");
+    const right = document.getElementById("more_info_modal_right");
+    left.innerHTML = "";
+    right.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = result.poster;
+
+    const title_span = document.createElement("span");
+    title_span.textContent = result.title;
 
 
 }
@@ -77,9 +97,16 @@ function close_overlay_on_esc (event) {
 function edit_pass_id(event) {
     const id = event.target.dataset.idNum;
     const type = event.target.dataset.type;
+    const imdbid = event.target.dataset.imdbid;
 
-    document.getElementById("actionForm").action = `/edit/${id}`;
-    document.getElementById("actionForm").dataset.type = type;
+    const url = new URL(`/edit/${id}`, window.location.origin);
+
+    if (imdbid) {
+        url.searchParams.set("i", imdbid);
+    }
+
+    actionForm.action = url.pathname + url.search;
+    actionForm.dataset.type = type;
 }
 
 // Assigns add action for action form
@@ -150,9 +177,9 @@ function renderResults(results) {
             new_name.value = item.title;
             action_autocomplete_list.innerHTML = "";
 
-            let action = action_form.action;            // Allows clicking a result to autofill and submit form
-            action += `?imdbID=${item.imdbID}`
-            action_form.action = action;
+            const url = new URL(action_form.action, window.location.origin);        // Allows clicking result to autofill + submit
+            url.searchParams.set("i", item.imdbID);
+            action_form.action = url.pathname + url.search;
 
             action_form.submit();
         });

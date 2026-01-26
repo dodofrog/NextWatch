@@ -72,7 +72,7 @@ def search_series():
 
 @app.route('/search_imdbid')
 def search_imdbid():
-    imdbid = request.args.get("q", "").strip()
+    imdbid = request.args.get("i", "").strip()
     if not imdbid: return jsonify([])
 
     response = requests.get(f"{base_url}i={imdbid}", timeout=5)
@@ -84,7 +84,20 @@ def search_imdbid():
     if data.get("Response") == "False":
         return jsonify([])
 
+    result = {
+        "title": data.get("Title"),
+        "year": data.get("Year"),
+        "rating": data.get("Rating"),
+        "runtime": data.get("Runtime"),
+        "genre": data.get("Genre"),
+        "director": data.get("Director"),
+        "writer": data.get("Writer"),
+        "actors": data.get("Actors"),
+        "plot": data.get("Plot"),
+        "poster": data.get("Poster")
+    }
 
+    return jsonify(result)
 
 @app.route('/')
 def index():
@@ -141,6 +154,12 @@ def delete(id_num:int):
 
 @app.route('/edit/<int:id_num>', methods=['POST'])
 def edit(id_num:int):
-    new_title = request.form.get("title")
-    database.update(id_num, new_title)
-    return redirect(url_for('index'))
+    imdbid = request.args.get("i", "").strip()
+    if not imdbid:
+        new_title = request.form.get("title")
+        database.update(new_title, id_num)
+        return redirect(url_for('index'))
+    else:
+        new_title = request.form.get("title")
+        database.update(new_title, id_num, imdbid)
+        return redirect(url_for('index'))

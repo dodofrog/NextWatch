@@ -19,11 +19,11 @@
                         </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="movie">
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="movie">
                         <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                     </button>
 
-                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                    <button type="button" class="more_button" data-imdbid="{{ item[2] }}">
                         <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
                     </button>
                 </td>
@@ -47,11 +47,11 @@
                         </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="tv_show">
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="tv_show">
                         <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                     </button>
 
-                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                    <button type="button" class="more_button" data-imdbid="{{ item[2] }}">
                         <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
                     </button>
                 </td>
@@ -75,11 +75,11 @@
                         </button>
                     </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-type="anime">
+                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="anime">
                         <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                     </button>
 
-                    <button type="button" class="more_button" data-imdbid="{{ item[3] }}">
+                    <button type="button" class="more_button" data-imdbid="{{ item[2] }}">
                         <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
                     </button>
                 </td>
