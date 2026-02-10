@@ -1,6 +1,7 @@
 # Imports
 import os, requests
 import database
+import json
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from dotenv import load_dotenv
@@ -40,7 +41,6 @@ def search_movie():
             "imdbID": item.get("imdbID"),
             "poster": item.get("Poster") if item.get("Poster") != "N/A" else "/static/no-poster.png"
         })
-
     return jsonify(results)
 
 @app.route('/search_series')
@@ -70,11 +70,7 @@ def search_series():
 
     return jsonify(results)
 
-@app.route('/search_imdbid')
-def search_imdbid():
-    imdbid = request.args.get("i", "").strip()
-    if not imdbid: return jsonify([])
-
+def search_imdbid(imdbid):
     response = requests.get(f"{base_url}i={imdbid}", timeout=5)
     data = response.json()
 
@@ -87,6 +83,7 @@ def search_imdbid():
     result = {
         "title": data.get("Title"),
         "year": data.get("Year"),
+        "rated": data.get("Rated"),
         "runtime": data.get("Runtime"),
         "genre": data.get("Genre"),
         "director": data.get("Director"),
@@ -96,7 +93,14 @@ def search_imdbid():
         "poster": data.get("Poster")
     }
 
-    return jsonify(result)
+    return result
+
+@app.route('/get_json')
+def get_json():
+    imdbid = request.args.get("id", "").strip()
+
+    data = database.get_json(imdbid)
+    return jsonify(data)
 
 @app.route('/')
 def index():
@@ -112,13 +116,15 @@ def index():
 
 @app.route('/add_movie', methods=['POST'])
 def add_movie():
-    imdbid = request.args.get("i", "").strip()
+    imdbid = request.args.get("imdbID", "").strip()
     movie_title = request.form.get("title")
 
     if not imdbid:
         database.add_movie(movie_title)
     else:
-        database.add_movie(movie_title, imdbid)
+        movie_data = search_imdbid(imdbid)
+        movie_json = json.dumps(movie_data)
+        database.add_movie(movie_title, imdbid, movie_json)
 
     return redirect(url_for('index'))
 
@@ -130,7 +136,9 @@ def add_tv_show():
     if not imdbid:
         database.add_tv_show(tv_show_title)
     else:
-        database.add_tv_show(tv_show_title, imdbid)
+        tv_show_data = search_imdbid(imdbid)
+        tv_show_json = json.dumps(tv_show_data)
+        database.add_tv_show(tv_show_title, imdbid, tv_show_json)
 
     return redirect(url_for('index'))
 
@@ -142,7 +150,9 @@ def add_anime():
     if not imdbid:
         database.add_anime(anime_title)
     else:
-        database.add_anime(anime_title, imdbid)
+        anime_data = search_imdbid(imdbid)
+        anime_json = json.dumps(anime_data)
+        database.add_anime(anime_title, imdbid, anime_json)
 
     return redirect(url_for('index'))
 
@@ -153,12 +163,14 @@ def delete(id_num:int):
 
 @app.route('/edit/<int:id_num>', methods=['POST'])
 def edit(id_num:int):
-    imdbid = request.args.get("i", "").strip()
+    imdbid = request.args.get("imdbID", "").strip()
     if not imdbid:
         new_title = request.form.get("title")
         database.update(new_title, id_num)
         return redirect(url_for('index'))
     else:
+        data = search_imdbid(imdbid)
+        json_data = json.dumps(data)
         new_title = request.form.get("title")
-        database.update(new_title, id_num, imdbid)
+        database.update(new_title, id_num, imdbid, json_data)
         return redirect(url_for('index'))
