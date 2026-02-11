@@ -197,14 +197,26 @@ new_name.addEventListener("input", function () {
 async function fetchResults(query) {
     let type = action_form.dataset.type.split("_").pop();
 
-    if ((type == "show") || (type == "anime")) type = "series";
-    type.trim();
+    if ((type == "show") || (type == "movie")) {
+        if (type == "movie") type = "series";
+        type.trim();
 
-    try {
-        const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        renderResults(data);
-    } catch (err) { console.error(err); }
+        try {
+            const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            renderResults(data);
+        } catch (err) { console.error(err); }
+    }
+
+    else if (type == "anime") {
+        type.trim();
+
+        try {
+            const response = await fetch(`/search_omdb?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            renderResults(data);
+        } catch (err) { console.error(err); }
+    }
 
 }
 

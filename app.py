@@ -17,6 +17,32 @@ load_dotenv()
 OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 base_url = f"http://www.omdbapi.com/?apikey={OMDB_API_KEY}&"
 
+@app.route('/search_omdb')
+def search_omdb():
+    query = request.args.get("q", "").strip()
+
+    if not query:
+        return jsonify([])
+
+    response = requests.get(f"{base_url}s={query}", timeout=5)
+    data = response.json()
+
+    if not (response.status_code == 200):
+        return jsonify(["status code not 200"])
+
+    if data.get("Response") == "False":
+        return jsonify(data)
+
+    results = []
+    for item in data.get("Search", [])[:10]:
+        results.append({
+            "title": item.get("Title"),
+            "year": item.get("Year"),
+            "imdbID": item.get("imdbID"),
+            "poster": item.get("Poster") if item.get("Poster") != "N/A" else "/static/no-poster.png"
+        })
+    return jsonify(results)
+
 @app.route('/search_movie')
 def search_movie():
     query = request.args.get("q", "").strip()

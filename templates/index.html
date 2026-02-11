@@ -3,16 +3,16 @@
 {% block head %}{% endblock %}
 
 {% block body %}
-    <h1> NextWatch </h1>
-
-    <h2> Movies </h2>
+    <div class="list_container">
+    <div class="list"><h2 class="list_header"> Movies </h2>
         <table>
-            <tr> <th>Title</th> <th>Actions</th> </tr>
+            <tr> <th>Title</th> <th></th> </tr>
 
             {% for item in movie_list %}
             <tr>
                 <td>{{ item[1] }}</td>
                 <td>
+                    &nbsp;
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
                         <button type="submit" class="delete_button">
                             <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
@@ -31,16 +31,17 @@
             {% endfor %}
 
             <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
-        </table>
+        </table></div>
 
-    <h2> TV Shows </h2>
+    <div class="list"><h2 class="list_header"> TV Shows </h2>
         <table>
-            <tr> <th>Title</th> <th>Actions</th>  </tr>
+            <tr> <th>Title</th> <th></th>  </tr>
 
             {% for item in tv_show_list %}
             <tr>
                 <td>{{ item[1] }}</td>
                 <td>
+                    &nbsp;
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
                         <button type="submit" class="delete_button">
                             <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
@@ -59,16 +60,17 @@
             {% endfor %}
 
             <tr> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
-        </table>
+        </table></div>
 
-    <h2> Anime </h2>
+    <div class="list"><h2 class="list_header"> Anime </h2>
         <table>
-            <tr> <th>Title</th> <th>Actions</th>  </tr>
+            <tr> <th>Title</th> <th></th>  </tr>
 
             {% for item in anime_list %}
             <tr>
                 <td>{{ item[1] }}</td>
                 <td>
+                    &nbsp;
                     <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
                         <button type="submit" class="delete_button">
                             <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
@@ -87,7 +89,8 @@
             {% endfor %}
 
             <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
-        </table>
+        </table></div>
+    </div>
 
     <div id="action_overlay" class="overlay">
         <div id="action_modal">

@@ -1,6 +1,47 @@
+body {
+    background-color: #282b30;
+    color: #c1c5c9;
+    font-family: 'Inter', sans-serif;
+}
+
+.list_header {
+    text-decoration: underline;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.list_container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 150px;
+    margin-top: 40px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+input {
+    background-color: transparent;
+    border-color: #c1c5c9;
+    border-radius: 8px;
+    color: #c1c5c9;
+}
+
+input:focus {
+    outline: 1px solid transparent; /* or whatever accent color */
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
 table, th, td {
     border: 1px solid black;
     border-collapse:collapse;
+    border-color: #282b30;
 }
 
 .overlay {
@@ -13,7 +54,7 @@ table, th, td {
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.5);
-    z-index: 2;
+    z-index: 1000;
     justify-content: center;
     align-items: center;
 }
@@ -21,10 +62,10 @@ table, th, td {
 #action_modal {
     position: absolute;
     display: block;
-    top: 50%;
+    top: 40%;
     left: 50%;
     padding: 10px;
-    background-color: white;
+    background-color: transparent;
     border-radius: 4px;
     transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
@@ -38,17 +79,13 @@ table, th, td {
     width: 100%;
     max-height: 200px; /* makes it scrollable if too many items */
     overflow-y: auto;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: transparent;
     border-radius: 4px;
-    z-index: 1000;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
     padding: 0;
     margin: 0;
     list-style: none;
 }
 
-/* Each result item */
 .autocomplete_list li {
     display: flex;
     align-items: center;
@@ -57,7 +94,6 @@ table, th, td {
     transition: background-color 0.3s;
 }
 
-/* Image in each result (poster) */
 .autocomplete_list li img {
     width: 40px;
     height: 60px;
@@ -66,9 +102,8 @@ table, th, td {
     flex-shrink: 0;
 }
 
-/* Hover effect */
 .autocomplete_list li:hover {
-    background-color: #f0f0f0;
+    background-color: #404040;
 }
 
 .autocomplete_list li.active {
@@ -89,16 +124,23 @@ table, th, td {
     border-radius: 4px;
     width: 30px;
     height: 20px;
-    background-color: #dedede;
+    background-color: #555a5c;
     transition: background-color 0.2s;
 }
 
-.delete_button:hover, .edit_button:hover, .more_button:hover, .add_button:hover{
+#action_submit, #action_cancel {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    height: 20px;
+    background-color: #555a5c;
+    transition: background-color 0.2s;
+}
+
+.delete_button:hover, .edit_button:hover, .more_button:hover, .add_button:hover, #action_submit:hover, #action_cancel:hover{
     background-color: #c2c2c2;
 }
 
-
-/* More Info Overlay */
 
 .info_modal {
     position: relative;
@@ -106,7 +148,7 @@ table, th, td {
     justify-content: center;
     align-items: center;
     border-radius: 8px;
-    background-color: #f2f1e3;
+    background-color: #282b30;
     width: 1000px;
 }
 
@@ -130,7 +172,8 @@ table, th, td {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: none;
+    background: transparent;
+    filter: invert(1);
     border: none;
 }
 
