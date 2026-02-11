@@ -198,7 +198,7 @@ async function fetchResults(query) {
     let type = action_form.dataset.type.split("_").pop();
 
     if ((type == "show") || (type == "movie")) {
-        if (type == "movie") type = "series";
+        if (type == "show") type = "series";
         type.trim();
 
         try {
