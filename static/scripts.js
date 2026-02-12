@@ -204,11 +204,9 @@ function render_autocomplete(results) {
     results.forEach(item => {
         const li = document.createElement("li");
 
-        // poster
         const img = document.createElement("img");
         img.src = item.poster;
 
-        // text
         const text = document.createElement("span");
         text.textContent = `${item.title} | ${item.year}`
 
@@ -228,8 +226,6 @@ function render_autocomplete(results) {
 
         actionAutocompleteList.appendChild(li);
     })
-
-
 }
 
 /*

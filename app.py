@@ -150,7 +150,8 @@ def add_movie():
     else:
         movie_data = search_imdbid(imdbid)
         movie_json = json.dumps(movie_data)
-        database.add_movie(movie_title, imdbid, movie_json)
+        genres = movie_data.get("genre")
+        database.add_movie(movie_title, imdbid, movie_json, genres)
 
     return redirect(url_for('index'))
 
@@ -164,7 +165,8 @@ def add_tv_show():
     else:
         tv_show_data = search_imdbid(imdbid)
         tv_show_json = json.dumps(tv_show_data)
-        database.add_tv_show(tv_show_title, imdbid, tv_show_json)
+        genres = tv_show_data.get("genre")
+        database.add_tv_show(tv_show_title, imdbid, tv_show_json, genres)
 
     return redirect(url_for('index'))
 
@@ -178,7 +180,8 @@ def add_anime():
     else:
         anime_data = search_imdbid(imdbid)
         anime_json = json.dumps(anime_data)
-        database.add_anime(anime_title, imdbid, anime_json)
+        genres = anime_data.get("genre")
+        database.add_anime(anime_title, imdbid, anime_json, genres)
 
     return redirect(url_for('index'))
 

@@ -4,92 +4,97 @@
 
 {% block body %}
     <div class="list_container">
-    <div class="list"><h2 class="list_header"> Movies </h2>
-        <table>
-            <tr> <th>Title</th> <th></th> </tr>
+        <div class="list">
+            <h2 class="list_header"> Movies </h2>
 
-            {% for item in movie_list %}
-            <tr>
-                <td>{{ item[1] }}</td>
-                <td>
-                    &nbsp;
-                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit" class="delete_button">
-                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+            <table>
+                <tr> <th>Title</th> </tr>
+
+                {% for item in movie_list %}
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>
+                        &nbsp;
+                        <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                            <button type="submit" class="delete_button">
+                                <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                            </button>
+                        </form>
+
+                        <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="movie">
+                            <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                         </button>
-                    </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="movie">
-                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
-                    </button>
-
-                    <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
-                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
-
-            <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
-        </table></div>
-
-    <div class="list"><h2 class="list_header"> TV Shows </h2>
-        <table>
-            <tr> <th>Title</th> <th></th>  </tr>
-
-            {% for item in tv_show_list %}
-            <tr>
-                <td>{{ item[1] }}</td>
-                <td>
-                    &nbsp;
-                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit" class="delete_button">
-                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                        <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
+                            <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
                         </button>
-                    </form>
+                    </td>
+                </tr>
+                {% endfor %}
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="tv_show">
-                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
-                    </button>
+                <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
+            </table>
+        </div>
 
-                    <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
-                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
+        <div class="list"><h2 class="list_header"> TV Shows </h2>
+            <table>
+                <tr> <th>Title</th> </tr>
 
-            <tr> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
-        </table></div>
+                {% for item in tv_show_list %}
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>
+                        &nbsp;
+                        <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                            <button type="submit" class="delete_button">
+                                <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                            </button>
+                        </form>
 
-    <div class="list"><h2 class="list_header"> Anime </h2>
-        <table>
-            <tr> <th>Title</th> <th></th>  </tr>
-
-            {% for item in anime_list %}
-            <tr>
-                <td>{{ item[1] }}</td>
-                <td>
-                    &nbsp;
-                    <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
-                        <button type="submit" class="delete_button">
-                            <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                        <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="tv_show">
+                            <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
                         </button>
-                    </form>
 
-                    <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="anime">
-                        <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
-                    </button>
+                        <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
+                            <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
 
-                    <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
-                        <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
-                    </button>
-                </td>
-            </tr>
-            {% endfor %}
+                <tr> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
+            </table>
+        </div>
 
-            <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
-        </table></div>
+        <div class="list"><h2 class="list_header"> Anime </h2>
+            <table>
+                <tr> <th>Title</th> </tr>
+
+                {% for item in anime_list %}
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>
+                        &nbsp;
+                        <form method="POST" action="{{ url_for('delete', id_num=item[0]) }}" style="display:inline">
+                            <button type="submit" class="delete_button">
+                                <img src="{{ url_for('static', filename='icons/deleteIcon.png') }}" class="action_images">
+                            </button>
+                        </form>
+
+                        <button type="button" class="edit_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}" data-type="anime">
+                            <img src="{{ url_for('static', filename='icons/editIcon.png') }}" class="action_images">
+                        </button>
+
+                        <button type="button" class="more_button" data-id-num="{{ item[0] }}" data-imdbid="{{ item[2] }}">
+                            <img src="{{ url_for('static', filename='icons/moreIcon.png')}}" class="action_images">
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
+            </table>
+        </div>
     </div>
 
     <div id="action_overlay" class="overlay">
