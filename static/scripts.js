@@ -1,67 +1,84 @@
-// Allows add/edit/more info buttons to work
-document.addEventListener("click", openActionForm);
-document.addEventListener("click", openMoreInfo);
+const actionForm = document.getElementById("action_form");
+const actionOverlay = document.getElementById("action_overlay");
+const actionInput = document.getElementById("action_input");
+const actionCancel = document.getElementById("action_cancel");
+const actionAutocompleteList = document.getElementById("action_autocomplete_list");
+const moreInfoOverlay = document.getElementById("more_info_overlay");
+const moreInfoModalRight = document.getElementById("more_info_modal_right");
+const moreInfoModalLeft = document.getElementById("more_info_modal_left");
 
-// Allows esc to close overlays
+document.addEventListener("click", open_action_form);
+document.addEventListener("click", open_more_info);
 document.addEventListener("keydown", close_overlay_on_esc)
-
-// Turns overlay off if add/edit is cancelled
-document.getElementById("action_cancel").addEventListener("click", all_overlay_off);
-
-// Allows x button to work for info overlay
 document.addEventListener("click", (event) => {
     const closeBtn = event.target.closest(".close_button");
     if (!closeBtn) return;
 
     all_overlay_off();
 })
+actionCancel.addEventListener("click", all_overlay_off);
+actionInput.addEventListener("input", function () {
+    const query = actionInput.value.trim();
+
+    if (search_timer) clearTimeout(search_timer);
+
+    if (query.length < 3) {
+        actionAutocompleteList.innerHTML = "";
+        return;
+    }
+
+    search_timer = setTimeout(() => {
+        fetch_autocomplete_results(query);
+    }, 300);
+});
 
 let overlayOpen = false;
+let search_timer = null;
 
-// Opens add/edit form
-function openActionForm(event) {
+/*
+ * Overlay Functions
+ */
+function action_overlay_on() {
+    actionOverlay.style.display = "flex";
+    actionInput.value = "";
+    overlayOpen = true;
+}
+function more_info_overlay_on() {
+    moreInfoOverlay.style.display = "flex";
+    moreInfoModalLeft.innerHTML = "";
+    moreInfoModalRight.innerHTML = "";
+    overlayOpen = true;
+}
+function all_overlay_off() {
+    actionOverlay.style.display = "none";
+    moreInfoOverlay.style.display = "none";
+    clear_autocomplete();
+    overlayOpen = false;
+}
+function close_overlay_on_esc (event) {
+    if(event.key === "Escape" && overlayOpen)
+        all_overlay_off();
+}
+
+/*
+ * Opening Functions
+ */
+function open_action_form(event) {
     const editBtn = event.target.closest(".edit_button");
     const addBtn = event.target.closest(".add_button");
     if (addBtn) {
         action_overlay_on();
         add_type({ target: addBtn });
-        document.getElementById("new_name").focus();
+        actionInput.focus();
     }
     else if (editBtn) {
         action_overlay_on();
         edit_pass_id({ target: editBtn });
-        document.getElementById("new_name").focus();
+        actionInput.focus();
     }
     else return;
 }
-
-// Toggles overlays
-function action_overlay_on() {
-    document.getElementById("action_overlay").style.display = "flex";
-    document.getElementById("new_name").value = "";
-    overlayOpen = true;
-}
-
-function more_info_overlay_on() {
-    document.getElementById("more_info_overlay").style.display = "flex";
-    document.getElementById("more_info_modal_left").innerHTML = "";
-    document.getElementById("more_info_modal_right").innerHTML = "";
-    overlayOpen = true;
-}
-
-function all_overlay_off() {
-    document.getElementById("action_overlay").style.display = "none";
-    document.getElementById("more_info_overlay").style.display = "none";
-    clearAutocomplete();
-    overlayOpen = false;
-}
-
-function close_overlay_on_esc (event) {
-    if(event.key === "Escape" && overlayOpen) all_overlay_off();
-}
-
-// Open more info tab
-async function openMoreInfo(event) {
+async function open_more_info(event) {
     const moreInfoBtn = event.target.closest(".more_button");
     if (!moreInfoBtn) return;
 
@@ -69,11 +86,14 @@ async function openMoreInfo(event) {
 
     more_info_overlay_on();
 
-    const data = await getItemInfo({ target:moreInfoBtn });
-    renderMoreInfo(data, imdbID);
+    const data = await get_item_info({ target:moreInfoBtn });
+    render_more_info(data, imdbID);
 }
 
-async function getItemInfo(event) {
+/*
+ * Fetching Functions
+ */
+async function get_item_info(event) {
     const id = event.target.dataset.idNum;
 
     try {
@@ -83,10 +103,38 @@ async function getItemInfo(event) {
         return data;
     } catch (err) { console.error(err); }
 }
+async function fetch_autocomplete_results(query) {
+    let type = actionForm.dataset.type.split("_").pop();
 
-function renderMoreInfo(result, imdbid) {
-    const left = document.getElementById("more_info_modal_left");
-    const right = document.getElementById("more_info_modal_right");
+    if ((type == "show") || (type == "movie")) {
+        if (type == "show") type = "series";
+        type.trim();
+
+        try {
+            const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            render_autocomplete(data);
+        } catch (err) { console.error(err); }
+    }
+
+    else if (type == "anime") {
+        type.trim();
+
+        try {
+            const response = await fetch(`/search_omdb?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            render_autocomplete(data);
+        } catch (err) { console.error(err); }
+    }
+
+}
+
+/*
+ * Rendering Functions
+ */
+function render_more_info(result, imdbid) {
+    const left = moreInfoModalLeft;
+    const right = moreInfoModalRight;
     left.innerHTML = "";
     right.innerHTML = "";
 
@@ -150,78 +198,8 @@ function renderMoreInfo(result, imdbid) {
     right.appendChild(document.createElement("br"));
     right.appendChild(link);
 }
-
-// Assigns edit action for action form
-function edit_pass_id(event) {
-    const id = event.target.dataset.idNum;
-    const type = event.target.dataset.type;
-
-    document.getElementById("actionForm").action = `/edit/${id}`;
-    document.getElementById("actionForm").dataset.type = type;
-}
-
-// Assigns add action for action form
-function add_type(event) {
-    const type = event.target.dataset.type;
-
-    document.getElementById("actionForm").action = `/add_${type}`;
-    document.getElementById("actionForm").dataset.type = type;
-}
-
-/*
- * AUTOCOMPLETE SEARCH
- */
-
-const action_form = document.getElementById("actionForm");
-const new_name = document.getElementById("new_name");
-const action_autocomplete_list = document.getElementById("action_autocomplete_list");
-
-let search_timer = null;
-
-// Listens to the add_form
-new_name.addEventListener("input", function () {
-    const query = new_name.value.trim();
-
-    if (search_timer) clearTimeout(search_timer);
-
-    if (query.length < 3) {
-        action_autocomplete_list.innerHTML = "";
-        return;
-    }
-
-    search_timer = setTimeout(() => {
-        fetchResults(query);
-    }, 300);
-});
-
-async function fetchResults(query) {
-    let type = action_form.dataset.type.split("_").pop();
-
-    if ((type == "show") || (type == "movie")) {
-        if (type == "show") type = "series";
-        type.trim();
-
-        try {
-            const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
-            const data = await response.json();
-            renderResults(data);
-        } catch (err) { console.error(err); }
-    }
-
-    else if (type == "anime") {
-        type.trim();
-
-        try {
-            const response = await fetch(`/search_omdb?q=${encodeURIComponent(query)}`);
-            const data = await response.json();
-            renderResults(data);
-        } catch (err) { console.error(err); }
-    }
-
-}
-
-function renderResults(results) {
-    action_autocomplete_list.innerHTML = "";
+function render_autocomplete(results) {
+    actionAutocompleteList.innerHTML = "";
 
     results.forEach(item => {
         const li = document.createElement("li");
@@ -238,23 +216,38 @@ function renderResults(results) {
         li.appendChild(text);
 
         li.addEventListener("click", () => {
-            new_name.value = item.title;
-            action_autocomplete_list.innerHTML = "";
+            actionInput.value = item.title;
+            actionAutocompleteList.innerHTML = "";
 
-            const url = new URL(action_form.action, window.location.origin);
+            const url = new URL(actionForm.action, window.location.origin);
             url.searchParams.set("imdbID", item.imdbID);
-            action_form.action = url.pathname + url.search;
+            actionForm.action = url.pathname + url.search;
 
-            action_form.submit();
+            actionForm.submit();
         });
 
-        action_autocomplete_list.appendChild(li);
+        actionAutocompleteList.appendChild(li);
     })
 
 
 }
 
-// Clears autocomplete list
-function clearAutocomplete() {
-    action_autocomplete_list.innerHTML = "";
+/*
+ * Helper Functions
+ */
+function clear_autocomplete() {
+    actionAutocompleteList.innerHTML = "";
+}
+function edit_pass_id(event) {
+    const id = event.target.dataset.idNum;
+    const type = event.target.dataset.type;
+
+    actionForm.action = `/edit/${id}`;
+    actionForm.dataset.type = type;
+}
+function add_type(event) {
+    const type = event.target.dataset.type;
+
+    actionForm.action = `/add_${type}`;
+    actionForm.dataset.type = type;
 }
