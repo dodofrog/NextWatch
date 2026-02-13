@@ -6,15 +6,32 @@ const actionAutocompleteList = document.getElementById("action_autocomplete_list
 const moreInfoOverlay = document.getElementById("more_info_overlay");
 const moreInfoModalRight = document.getElementById("more_info_modal_right");
 const moreInfoModalLeft = document.getElementById("more_info_modal_left");
+const movieList = document.getElementById("movie_list");
+const tvShowList = document.getElementById("tv_show_list");
+const animeList = document.getElementById("anime_list");
+const movies = JSON.parse(movieList.dataset.movies);
+const tvShows = JSON.parse(tvShowList.dataset.tvShows);
+const animes = JSON.parse(animeList.dataset.animes);
 
 document.addEventListener("click", open_action_form);
 document.addEventListener("click", open_more_info);
 document.addEventListener("keydown", close_overlay_on_esc)
 document.addEventListener("click", (event) => {
-    const closeBtn = event.target.closest(".close_button");
-    if (!closeBtn) return;
-
+    const closeMoreInfoBtn = event.target.closest(".close_more_info_button");
+    if (!closeMoreInfoBtn) return;
     all_overlay_off();
+    return;
+})
+document.addEventListener("click", (event) => {
+    const filterBtn = event.target.closest(".filter_button");
+    if(!filterBtn) return;
+
+    const type = filterBtn.dataset.type;
+
+    if(overlayOpen) all_overlay_off();
+    else open_dropdown(type);
+
+    return;
 })
 actionCancel.addEventListener("click", all_overlay_off);
 actionInput.addEventListener("input", function () {
@@ -31,9 +48,18 @@ actionInput.addEventListener("input", function () {
         fetch_autocomplete_results(query);
     }, 300);
 });
+document.addEventListener("click", (event) => {
+    if ((event.target == moreInfoOverlay) || (event.target == actionOverlay)) {
+        all_overlay_off();
+    }
+});
+document.addEventListener("DOMContentLoaded", init_page);
 
 let overlayOpen = false;
 let search_timer = null;
+let movieGenreCount = {};
+let tvShowGenreCount = {};
+let animeGenreCount = {};
 
 /*
  * Overlay Functions
@@ -50,6 +76,12 @@ function more_info_overlay_on() {
     overlayOpen = true;
 }
 function all_overlay_off() {
+    let dropdowns = document.getElementsByClassName("filter_dropdown_content");
+    let i = 0;
+    for (i = 0; i < dropdowns.length; i++){
+        let cur = dropdowns[i];
+        cur.style.display = "none";
+    }
     actionOverlay.style.display = "none";
     moreInfoOverlay.style.display = "none";
     clear_autocomplete();
@@ -88,6 +120,45 @@ async function open_more_info(event) {
 
     const data = await get_item_info({ target:moreInfoBtn });
     render_more_info(data, imdbID);
+}
+function open_dropdown(type) {
+    const content = document.getElementById(`${type}_filter_dropdown_content`);
+    content.style.display = "flex";
+    overlayOpen = true;
+
+    if (type == "movie") {
+        content.innerHTML = "";
+        for (let genre in movieGenreCount) {
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.textContent = `${genre} - ${movieGenreCount[genre]}`;
+
+            li.appendChild(span);
+            content.appendChild(li);
+        }
+    }
+    if (type == "tv_show") {
+        content.innerHTML = "";
+        for (let genre in tvShowGenreCount) {
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.textContent = `${genre} - ${tvShowGenreCount[genre]}`;
+
+            li.appendChild(span);
+            content.appendChild(li);
+        }
+    }
+    if (type == "anime") {
+        content.innerHTML = "";
+        for (let genre in animeGenreCount) {
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.textContent = `${genre} - ${animeGenreCount[genre]}`;
+
+            li.appendChild(span);
+            content.appendChild(li);
+        }
+    }
 }
 
 /*
@@ -138,8 +209,9 @@ function render_more_info(result, imdbid) {
     left.innerHTML = "";
     right.innerHTML = "";
 
-    const img = document.createElement("img");
-    img.src = result.poster;
+    const poster = document.createElement("img");
+    poster.src = result.poster;
+    poster.style.borderRadius = "8px";
 
     const title = document.createElement("span");
     title.textContent = `${result.title} | `;
@@ -172,7 +244,7 @@ function render_more_info(result, imdbid) {
     link.rel = "noopener noreferrer";
 
     // left side
-    left.appendChild(img);
+    left.appendChild(poster);
     left.appendChild(document.createElement("br"));
     left.appendChild(title);
     left.appendChild(year);
@@ -204,13 +276,14 @@ function render_autocomplete(results) {
     results.forEach(item => {
         const li = document.createElement("li");
 
-        const img = document.createElement("img");
-        img.src = item.poster;
+        const poster = document.createElement("img");
+        poster.src = item.poster;
+        poster.style.borderRadius = "4px";
 
         const text = document.createElement("span");
         text.textContent = `${item.title} | ${item.year}`
 
-        li.appendChild(img);
+        li.appendChild(poster);
         li.appendChild(text);
 
         li.addEventListener("click", () => {
@@ -226,6 +299,12 @@ function render_autocomplete(results) {
 
         actionAutocompleteList.appendChild(li);
     })
+}
+function render_movie_list() {
+}
+function render_tv_show_list() {
+}
+function render_anime_list() {
 }
 
 /*
@@ -246,4 +325,43 @@ function add_type(event) {
 
     actionForm.action = `/add_${type}`;
     actionForm.dataset.type = type;
+}
+function add_genres() {
+    for (let i = 0; i < movies.length; i++) {
+        const idNum = movies[i][0];
+        const cur = document.getElementById(`movie_row_${idNum}`);
+        let genres = cur.dataset.genres.split(",");
+        for (let j = 0; j < genres.length; j++) {
+            const genre = genres[j].trim();
+            if (genre in movieGenreCount) movieGenreCount[genre] += 1;
+            else movieGenreCount[genre] = 1;
+        }
+    }
+    for (let i = 0; i < tvShows.length; i++) {
+        const idNum = tvShows[i][0];
+        const cur = document.getElementById(`tv_show_row_${idNum}`);
+        let genres = cur.dataset.genres.split(",");
+        for (let j = 0; j < genres.length; j++) {
+            const genre = genres[j].trim();
+            if (genre in tvShowGenreCount) tvShowGenreCount[genre] += 1;
+            else tvShowGenreCount[genre] = 1;
+        }
+    }
+    for (let i = 0; i < animes.length; i++) {
+        const idNum = animes[i][0];
+        const cur = document.getElementById(`anime_row_${idNum}`);
+        let genres = cur.dataset.genres.split(",");
+        for (let j = 0; j < genres.length; j++) {
+            const genre = genres[j].trim();
+            if (genre in animeGenreCount) animeGenreCount[genre] += 1;
+            else animeGenreCount[genre] = 1;
+        }
+    }
+
+    console.log(movieGenreCount);
+    console.log(tvShowGenreCount);
+    console.log(animeGenreCount);
+}
+function init_page() {
+    add_genres();
 }

@@ -4,14 +4,25 @@
 
 {% block body %}
     <div class="list_container">
-        <div class="list">
+        <div id="movie_list" class="list" data-movies='{{ movie_list | tojson | safe }}'>
             <h2 class="list_header"> Movies </h2>
 
             <table>
-                <tr> <th>Title</th> </tr>
+                <tr>
+                    <th>
+                        Title
+                        <div class="filter_dropdown">
+                            <button type="button" class="filter_button" data-type="movie">
+                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                            </button>
+                            <ul class="filter_dropdown_content" id="movie_filter_dropdown_content">
+                            </ul>
+                        </div>
+                    </th>
+                </tr>
 
                 {% for item in movie_list %}
-                <tr>
+                <tr class="movie_row" id="movie_row_{{ item[0] }}" data-id-num="{{ item[0] }}" data-genres="{{ item[3] }}">
                     <td>{{ item[1] }}</td>
                     <td>
                         &nbsp;
@@ -36,12 +47,26 @@
             </table>
         </div>
 
-        <div class="list"><h2 class="list_header"> TV Shows </h2>
+        <div id="tv_show_list" class="list" data-tv-shows='{{ tv_show_list | tojson | safe }}'>
+            <h2 class="list_header">
+                TV Shows
+            </h2>
             <table>
-                <tr> <th>Title</th> </tr>
+                <tr>
+                    <th>
+                        Title
+                        <div class="filter_dropdown">
+                            <button type="button" class="filter_button" data-type="tv_show">
+                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                            </button>
+                            <ul class="filter_dropdown_content" id="tv_show_filter_dropdown_content">
+                            </ul>
+                        </div>
+                    </th>
+                </tr>
 
                 {% for item in tv_show_list %}
-                <tr>
+                <tr class="tv_show_row" id="tv_show_row_{{ item[0] }}" data-id-num="{{ item[0] }}" data-genres="{{ item[3] }}">
                     <td>{{ item[1] }}</td>
                     <td>
                         &nbsp;
@@ -66,12 +91,26 @@
             </table>
         </div>
 
-        <div class="list"><h2 class="list_header"> Anime </h2>
+        <div id="anime_list" class="list" data-animes='{{ anime_list | tojson | safe }}'>
+            <h2 class="list_header">
+                Anime
+            </h2>
             <table>
-                <tr> <th>Title</th> </tr>
+                <tr>
+                    <th>
+                        Title
+                        <div class="filter_dropdown">
+                            <button type="button" class="filter_button" data-type="anime">
+                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                            </button>
+                            <ul class="filter_dropdown_content" id="anime_filter_dropdown_content">
+                            </ul>
+                        </div>
+                    </th>
+                </tr>
 
                 {% for item in anime_list %}
-                <tr>
+                <tr class="anime_row" id="anime_row_{{ item[0] }}" data-id-num="{{ item[0] }}" data-genres="{{ item[3] }}">
                     <td>{{ item[1] }}</td>
                     <td>
                         &nbsp;
@@ -112,9 +151,9 @@
     </div>
 
     <div id="more_info_overlay" class="overlay">
-        <div class="info_modal">
-            <button class="close_button">
-                <img src="{{ url_for('static', filename='icons/xIcon.png') }}" class="close_image">
+        <div id="info_modal">
+            <button class="close_more_info_button">
+                <img src="{{ url_for('static', filename='icons/xIconWhite.png') }}" class="close_more_info_image">
             </button>
             <div id="more_info_modal_left">
                 Poster part

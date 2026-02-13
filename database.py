@@ -74,7 +74,7 @@ def get_all_movies():
     with get_connection() as con:
         cur = con.cursor()
         cur.execute(
-            "SELECT id, name, imdbID FROM media WHERE type = 'movie' ORDER BY id"
+            "SELECT id, name, imdbID, genres FROM media WHERE type = 'movie' ORDER BY id"
         )
         result = cur.fetchall()
     return result
@@ -83,7 +83,7 @@ def get_all_tv_shows():
     with get_connection() as con:
         cur = con.cursor()
         cur.execute(
-            "SELECT id, name, imdbID FROM media WHERE type = 'tv_show' ORDER BY id"
+            "SELECT id, name, imdbID, genres FROM media WHERE type = 'tv_show' ORDER BY id"
         )
         result = cur.fetchall()
     return result
@@ -92,7 +92,7 @@ def get_all_anime():
     with get_connection() as con:
         cur = con.cursor()
         cur.execute(
-            "SELECT id, name, imdbID FROM media WHERE type = 'anime' ORDER BY id"
+            "SELECT id, name, imdbID, genres FROM media WHERE type = 'anime' ORDER BY id"
         )
         result = cur.fetchall()
     return result
@@ -119,10 +119,10 @@ def update(*args):
                 "UPDATE media SET name = ? WHERE id = ?",
                 (args[0], args[1])
             )
-        elif len(args) == 4:
+        elif len(args) == 5:
             cur.execute(
-                "UPDATE media SET name = ?, imdbID = ?, movieJSON = ? WHERE id = ?",
-                (args[0], args[2], args[3], args[1])
+                "UPDATE media SET name = ?, imdbID = ?, movieJSON = ?, genres = ? WHERE id = ?",
+                (args[0], args[2], args[3], args[4], args[1])
             )
 
 # DELETE

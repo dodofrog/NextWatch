@@ -200,6 +200,7 @@ def edit(id_num:int):
     else:
         data = search_imdbid(imdbid)
         json_data = json.dumps(data)
+        genres = data.get("genre")
         new_title = request.form.get("title")
-        database.update(new_title, id_num, imdbid, json_data)
+        database.update(new_title, id_num, imdbid, json_data, genres)
         return redirect(url_for('index'))
