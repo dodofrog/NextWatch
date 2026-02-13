@@ -38,7 +38,7 @@ document.addEventListener("click", (event) => {
     const cur = document.getElementById(`${type}_filter_dropdown_content`);
     const wasOpen = cur.style.display === "flex";
     all_overlay_off();
-    if(!wasOpen) open_dropdown(type);
+    if(!wasOpen) open_filter_dropdown(type);
 
     return;
 })
@@ -147,7 +147,7 @@ async function open_more_info(event) {
     const data = await get_item_info({ target:moreInfoBtn });
     render_more_info(data, imdbID);
 }
-function open_dropdown(type) {
+function open_filter_dropdown(type) {
     const content = document.getElementById(`${type}_filter_dropdown_content`);
     content.style.display = "flex";
     overlayOpen = true;
@@ -849,6 +849,12 @@ function render_anime_list(genre) {
 /*
  * Helper Functions
  */
+function init_page() {
+    add_genres();
+    render_movie_list(prevMovieGenre);
+    render_tv_show_list(prevTvShowGenre);
+    render_anime_list(prevAnimeGenre);
+}
 function clear_autocomplete() {
     actionAutocompleteList.innerHTML = "";
 }
@@ -896,10 +902,4 @@ function add_genres() {
             else animeGenreCount[genre] = 1;
         }
     }
-}
-function init_page() {
-    add_genres();
-    render_movie_list(prevMovieGenre);
-    render_tv_show_list(prevTvShowGenre);
-    render_anime_list(prevAnimeGenre);
 }
