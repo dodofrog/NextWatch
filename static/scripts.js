@@ -9,6 +9,15 @@ const moreInfoModalLeft = document.getElementById("more_info_modal_left");
 const movieList = document.getElementById("movie_list");
 const tvShowList = document.getElementById("tv_show_list");
 const animeList = document.getElementById("anime_list");
+const movieTableHeader = document.getElementById("movie_list_header");
+const tvShowTableHeader = document.getElementById("tv_show_list_header");
+const animeTableHeader = document.getElementById("anime_list_header");
+const movieTable = document.getElementById("movie_table");
+const tvShowTable = document.getElementById("tv_show_table");
+const animeTable = document.getElementById("anime_table");
+const movieAddButton = document.getElementById("movie_add_button");
+const tvShowAddButton = document.getElementById("tv_show_add_button");
+const animeAddButton = document.getElementById("anime_add_button");
 const movies = JSON.parse(movieList.dataset.movies);
 const tvShows = JSON.parse(tvShowList.dataset.tvShows);
 const animes = JSON.parse(animeList.dataset.animes);
@@ -25,11 +34,11 @@ document.addEventListener("click", (event) => {
 document.addEventListener("click", (event) => {
     const filterBtn = event.target.closest(".filter_button");
     if(!filterBtn) return;
-
     const type = filterBtn.dataset.type;
-
-    if(overlayOpen) all_overlay_off();
-    else open_dropdown(type);
+    const cur = document.getElementById(`${type}_filter_dropdown_content`);
+    const wasOpen = cur.style.display === "flex";
+    all_overlay_off();
+    if(!wasOpen) open_dropdown(type);
 
     return;
 })
@@ -37,14 +46,14 @@ actionCancel.addEventListener("click", all_overlay_off);
 actionInput.addEventListener("input", function () {
     const query = actionInput.value.trim();
 
-    if (search_timer) clearTimeout(search_timer);
+    if (searchTimer) clearTimeout(searchTimer);
 
     if (query.length < 3) {
         actionAutocompleteList.innerHTML = "";
         return;
     }
 
-    search_timer = setTimeout(() => {
+    searchTimer = setTimeout(() => {
         fetch_autocomplete_results(query);
     }, 300);
 });
@@ -54,9 +63,18 @@ document.addEventListener("click", (event) => {
     }
 });
 document.addEventListener("DOMContentLoaded", init_page);
+document.addEventListener("click", (event) => {
+    const filterContent = event.target.closest(".filter_dropdown_content");
+    const filterBtn = event.target.closest(".filter_button");
+    if (!(filterContent || filterBtn)) filter_dropdown_off();
+})
+
 
 let overlayOpen = false;
-let search_timer = null;
+let searchTimer = null;
+let prevMovieGenre = sessionStorage.getItem("prevMovieGenre") || "reset";
+let prevTvShowGenre = sessionStorage.getItem("prevTvShowGenre") || "reset";
+let prevAnimeGenre = sessionStorage.getItem("prevAnimeGenre") || "reset";
 let movieGenreCount = {};
 let tvShowGenreCount = {};
 let animeGenreCount = {};
@@ -76,7 +94,7 @@ function more_info_overlay_on() {
     overlayOpen = true;
 }
 function all_overlay_off() {
-    let dropdowns = document.getElementsByClassName("filter_dropdown_content");
+    const dropdowns = document.getElementsByClassName("filter_dropdown_content");
     let i = 0;
     for (i = 0; i < dropdowns.length; i++){
         let cur = dropdowns[i];
@@ -86,6 +104,14 @@ function all_overlay_off() {
     moreInfoOverlay.style.display = "none";
     clear_autocomplete();
     overlayOpen = false;
+}
+function filter_dropdown_off() {
+    const dropdowns = document.getElementsByClassName("filter_dropdown_content");
+    let i = 0;
+    for (i = 0; i < dropdowns.length; i++){
+        let cur = dropdowns[i];
+        cur.style.display = "none";
+    }
 }
 function close_overlay_on_esc (event) {
     if(event.key === "Escape" && overlayOpen)
@@ -128,34 +154,100 @@ function open_dropdown(type) {
 
     if (type == "movie") {
         content.innerHTML = "";
+        if (Object.keys(movieGenreCount).length == 0) {
+            content.innerHTML = "No movies!";
+            return;
+        }
+
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = "RESET";
+
+        li.appendChild(span);
+
+        li.addEventListener("click", () => {
+            render_movie_list("reset");
+        })
+
+        content.appendChild(li);
+
         for (let genre in movieGenreCount) {
             const li = document.createElement("li");
             const span = document.createElement("span");
             span.textContent = `${genre} - ${movieGenreCount[genre]}`;
 
             li.appendChild(span);
+
+            li.addEventListener("click", () => {
+                render_movie_list(genre);
+            })
+
             content.appendChild(li);
         }
     }
     if (type == "tv_show") {
         content.innerHTML = "";
+        if (Object.keys(tvShowGenreCount).length == 0) {
+            content.innerHTML = "No tv shows!";
+            return;
+        }
+
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = "RESET";
+
+        li.appendChild(span);
+
+        li.addEventListener("click", () => {
+            render_tv_show_list("reset");
+        })
+
+        content.appendChild(li);
+
         for (let genre in tvShowGenreCount) {
             const li = document.createElement("li");
             const span = document.createElement("span");
             span.textContent = `${genre} - ${tvShowGenreCount[genre]}`;
 
             li.appendChild(span);
+
+            li.addEventListener("click", () => {
+                render_tv_show_list(genre);
+            })
+
             content.appendChild(li);
         }
     }
     if (type == "anime") {
         content.innerHTML = "";
+        if (Object.keys(animeGenreCount).length == 0) {
+            content.innerHTML = "No anime!";
+            return;
+        }
+
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = "RESET";
+
+        li.appendChild(span);
+
+        li.addEventListener("click", () => {
+            render_anime_list("reset");
+        })
+
+        content.appendChild(li);
+
         for (let genre in animeGenreCount) {
             const li = document.createElement("li");
             const span = document.createElement("span");
             span.textContent = `${genre} - ${animeGenreCount[genre]}`;
 
             li.appendChild(span);
+
+            li.addEventListener("click", () => {
+                render_anime_list(genre);
+            })
+
             content.appendChild(li);
         }
     }
@@ -179,7 +271,7 @@ async function fetch_autocomplete_results(query) {
 
     if ((type == "show") || (type == "movie")) {
         if (type == "show") type = "series";
-        type.trim();
+        type = type.trim();
 
         try {
             const response = await fetch(`/search_${type}?q=${encodeURIComponent(query)}`);
@@ -300,11 +392,458 @@ function render_autocomplete(results) {
         actionAutocompleteList.appendChild(li);
     })
 }
-function render_movie_list() {
+function render_movie_list(genre) {
+    movieTable.innerHTML = "";
+    prevMovieGenre = genre;
+    sessionStorage.setItem("prevMovieGenre", genre);
+    movieTable.appendChild(movieTableHeader);
+
+    if(genre == "reset") {
+        movies.forEach(movie => {
+        const tr = document.createElement("tr");
+        tr.className = ("movie_row");
+        tr.id = `movie_row_${movie[0]}`;
+        tr.dataset.idNum = `${movie[0]}`;
+        tr.dataset.genres = `${movie[3]}`;
+
+        const title = document.createElement("td");
+        title.textContent = `${movie[1]}`;
+
+        const rest = document.createElement("td");
+        rest.style.display = "flex";
+        rest.style.gap = "4px";
+
+        const deleteForm = document.createElement("form");
+        const deleteButton = document.createElement("button");
+        const deleteImage = document.createElement("img");
+
+        deleteForm.method = "POST";
+        deleteForm.action = `/delete/${movie[0]}`;
+        deleteForm.style.display = "inline";
+
+        deleteButton.type = "submit";
+        deleteButton.className = "delete_button";
+
+        deleteImage.src = "/static/icons/deleteIcon.png";
+        deleteImage.className = "action_images";
+
+        deleteButton.appendChild(deleteImage);
+        deleteForm.appendChild(deleteButton);
+
+        const editButton = document.createElement("button");
+        const editImage = document.createElement("img");
+
+        editButton.type = "button";
+        editButton.className = "edit_button";
+        editButton.dataset.idNum = `${movie[0]}`;
+        editButton.dataset.imdbid = `${movie[2]}`;
+        editButton.dataset.type = "movie";
+
+        editImage.src = "/static/icons/editIcon.png";
+        editImage.className = "action_images";
+
+        editButton.appendChild(editImage);
+
+        const moreButton = document.createElement("button");
+        const moreImage = document.createElement("img");
+
+        moreButton.type = "button";
+        moreButton.className = "more_button";
+        moreButton.dataset.idNum = `${movie[0]}`;
+        editButton.dataset.imdbid = `${movie[2]}`;
+
+        moreImage.src = "/static/icons/moreIcon.png";
+        moreImage.className = "action_images";
+
+        moreButton.appendChild(moreImage);
+
+        rest.appendChild(deleteForm);
+        rest.appendChild(editButton);
+        rest.appendChild(moreButton);
+
+        tr.appendChild(title);
+        tr.appendChild(rest);
+
+        movieTable.appendChild(tr);
+        })
+    }
+
+    movies.forEach(movie => {
+        let movieGenres = movie[3].split(",");
+        movieGenres = movieGenres.map(item => item.trim());
+        console.log(movieGenres);
+        if (movieGenres.includes(genre)) {
+            const tr = document.createElement("tr");
+            tr.className = ("movie_row");
+            tr.id = `movie_row_${movie[0]}`;
+            tr.dataset.idNum = `${movie[0]}`;
+            tr.dataset.genres = `${movie[3]}`;
+
+            const title = document.createElement("td");
+            title.textContent = `${movie[1]}`;
+
+            const rest = document.createElement("td");
+            rest.style.display = "flex";
+            rest.style.gap = "6px";
+
+            const deleteForm = document.createElement("form");
+            const deleteButton = document.createElement("button");
+            const deleteImage = document.createElement("img");
+
+            deleteForm.method = "POST";
+            deleteForm.action = `/delete/${movie[0]}`;
+            deleteForm.style.display = "inline";
+
+            deleteButton.type = "submit";
+            deleteButton.className = "delete_button";
+
+            deleteImage.src = "/static/icons/deleteIcon.png";
+            deleteImage.className = "action_images";
+
+            deleteButton.appendChild(deleteImage);
+            deleteForm.appendChild(deleteButton);
+
+            const editButton = document.createElement("button");
+            const editImage = document.createElement("img");
+
+            editButton.type = "button";
+            editButton.className = "edit_button";
+            editButton.dataset.idNum = `${movie[0]}`;
+            editButton.dataset.imdbid = `${movie[2]}`;
+            editButton.dataset.type = "movie";
+
+            editImage.src = "/static/icons/editIcon.png";
+            editImage.className = "action_images";
+
+            editButton.appendChild(editImage);
+
+            const moreButton = document.createElement("button");
+            const moreImage = document.createElement("img");
+
+            moreButton.type = "button";
+            moreButton.className = "more_button";
+            moreButton.dataset.idNum = `${movie[0]}`;
+            moreButton.dataset.imdbid = `${movie[2]}`;
+
+            moreImage.src = "/static/icons/moreIcon.png";
+            moreImage.className = "action_images";
+
+            moreButton.appendChild(moreImage);
+
+            rest.appendChild(deleteForm);
+            rest.appendChild(editButton);
+            rest.appendChild(moreButton);
+
+            tr.appendChild(title);
+            tr.appendChild(rest);
+
+            movieTable.appendChild(tr);
+        }
+    })
+    movieTable.appendChild(movieAddButton);
+    filter_dropdown_off();
 }
-function render_tv_show_list() {
+function render_tv_show_list(genre) {
+    tvShowTable.innerHTML = "";
+    prevTvShowGenre = genre;
+    sessionStorage.setItem("prevTvShowGenre", genre);
+    tvShowTable.appendChild(tvShowTableHeader);
+
+    if(genre == "reset") {
+        tvShows.forEach(tvShow => {
+        const tr = document.createElement("tr");
+        tr.className = ("tv_show_row");
+        tr.id = `tv_show_row_${tvShow[0]}`;
+        tr.dataset.idNum = `${tvShow[0]}`;
+        tr.dataset.genres = `${tvShow[3]}`;
+
+        const title = document.createElement("td");
+        title.textContent = `${tvShow[1]}`;
+
+        const rest = document.createElement("td");
+        rest.style.display = "flex";
+        rest.style.gap = "4px";
+
+        const deleteForm = document.createElement("form");
+        const deleteButton = document.createElement("button");
+        const deleteImage = document.createElement("img");
+
+        deleteForm.method = "POST";
+        deleteForm.action = `/delete/${tvShow[0]}`;
+        deleteForm.style.display = "inline";
+
+        deleteButton.type = "submit";
+        deleteButton.className = "delete_button";
+
+        deleteImage.src = "/static/icons/deleteIcon.png";
+        deleteImage.className = "action_images";
+
+        deleteButton.appendChild(deleteImage);
+        deleteForm.appendChild(deleteButton);
+
+        const editButton = document.createElement("button");
+        const editImage = document.createElement("img");
+
+        editButton.type = "button";
+        editButton.className = "edit_button";
+        editButton.dataset.idNum = `${tvShow[0]}`;
+        editButton.dataset.imdbid = `${tvShow[2]}`;
+        editButton.dataset.type = "tvShow";
+
+        editImage.src = "/static/icons/editIcon.png";
+        editImage.className = "action_images";
+
+        editButton.appendChild(editImage);
+
+        const moreButton = document.createElement("button");
+        const moreImage = document.createElement("img");
+
+        moreButton.type = "button";
+        moreButton.className = "more_button";
+        moreButton.dataset.idNum = `${tvShow[0]}`;
+        editButton.dataset.imdbid = `${tvShow[2]}`;
+
+        moreImage.src = "/static/icons/moreIcon.png";
+        moreImage.className = "action_images";
+
+        moreButton.appendChild(moreImage);
+
+        rest.appendChild(deleteForm);
+        rest.appendChild(editButton);
+        rest.appendChild(moreButton);
+
+        tr.appendChild(title);
+        tr.appendChild(rest);
+
+        tvShowTable.appendChild(tr);
+        })
+    }
+
+    tvShows.forEach(tvShow => {
+        let tvShowGenres = tvShow[3].split(",");
+        tvShowGenres = tvShowGenres.map(item => item.trim());
+        console.log(tvShowGenres);
+        if (tvShowGenres.includes(genre)) {
+            const tr = document.createElement("tr");
+            tr.className = ("tv_show_row");
+            tr.id = `tv_show_row_${tvShow[0]}`;
+            tr.dataset.idNum = `${tvShow[0]}`;
+            tr.dataset.genres = `${tvShow[3]}`;
+
+            const title = document.createElement("td");
+            title.textContent = `${tvShow[1]}`;
+
+            const rest = document.createElement("td");
+            rest.style.display = "flex";
+            rest.style.gap = "6px";
+
+            const deleteForm = document.createElement("form");
+            const deleteButton = document.createElement("button");
+            const deleteImage = document.createElement("img");
+
+            deleteForm.method = "POST";
+            deleteForm.action = `/delete/${tvShow[0]}`;
+            deleteForm.style.display = "inline";
+
+            deleteButton.type = "submit";
+            deleteButton.className = "delete_button";
+
+            deleteImage.src = "/static/icons/deleteIcon.png";
+            deleteImage.className = "action_images";
+
+            deleteButton.appendChild(deleteImage);
+            deleteForm.appendChild(deleteButton);
+
+            const editButton = document.createElement("button");
+            const editImage = document.createElement("img");
+
+            editButton.type = "button";
+            editButton.className = "edit_button";
+            editButton.dataset.idNum = `${tvShow[0]}`;
+            editButton.dataset.imdbid = `${tvShow[2]}`;
+            editButton.dataset.type = "tvShow";
+
+            editImage.src = "/static/icons/editIcon.png";
+            editImage.className = "action_images";
+
+            editButton.appendChild(editImage);
+
+            const moreButton = document.createElement("button");
+            const moreImage = document.createElement("img");
+
+            moreButton.type = "button";
+            moreButton.className = "more_button";
+            moreButton.dataset.idNum = `${tvShow[0]}`;
+            moreButton.dataset.imdbid = `${tvShow[2]}`;
+
+            moreImage.src = "/static/icons/moreIcon.png";
+            moreImage.className = "action_images";
+
+            moreButton.appendChild(moreImage);
+
+            rest.appendChild(deleteForm);
+            rest.appendChild(editButton);
+            rest.appendChild(moreButton);
+
+            tr.appendChild(title);
+            tr.appendChild(rest);
+
+            tvShowTable.appendChild(tr);
+        }
+    })
+    tvShowTable.appendChild(tvShowAddButton);
+    filter_dropdown_off();
 }
-function render_anime_list() {
+function render_anime_list(genre) {
+    animeTable.innerHTML = "";
+    prevAnimeGenre = genre;
+    sessionStorage.setItem("prevAnimeGenre", genre);
+    animeTable.appendChild(animeTableHeader);
+
+    if(genre == "reset") {
+        animes.forEach(anime => {
+        const tr = document.createElement("tr");
+        tr.className = ("anime_row");
+        tr.id = `anime_row_${anime[0]}`;
+        tr.dataset.idNum = `${anime[0]}`;
+        tr.dataset.genres = `${anime[3]}`;
+
+        const title = document.createElement("td");
+        title.textContent = `${anime[1]}`;
+
+        const rest = document.createElement("td");
+        rest.style.display = "flex";
+        rest.style.gap = "4px";
+
+        const deleteForm = document.createElement("form");
+        const deleteButton = document.createElement("button");
+        const deleteImage = document.createElement("img");
+
+        deleteForm.method = "POST";
+        deleteForm.action = `/delete/${anime[0]}`;
+        deleteForm.style.display = "inline";
+
+        deleteButton.type = "submit";
+        deleteButton.className = "delete_button";
+
+        deleteImage.src = "/static/icons/deleteIcon.png";
+        deleteImage.className = "action_images";
+
+        deleteButton.appendChild(deleteImage);
+        deleteForm.appendChild(deleteButton);
+
+        const editButton = document.createElement("button");
+        const editImage = document.createElement("img");
+
+        editButton.type = "button";
+        editButton.className = "edit_button";
+        editButton.dataset.idNum = `${anime[0]}`;
+        editButton.dataset.imdbid = `${anime[2]}`;
+        editButton.dataset.type = "anime";
+
+        editImage.src = "/static/icons/editIcon.png";
+        editImage.className = "action_images";
+
+        editButton.appendChild(editImage);
+
+        const moreButton = document.createElement("button");
+        const moreImage = document.createElement("img");
+
+        moreButton.type = "button";
+        moreButton.className = "more_button";
+        moreButton.dataset.idNum = `${anime[0]}`;
+        editButton.dataset.imdbid = `${anime[2]}`;
+
+        moreImage.src = "/static/icons/moreIcon.png";
+        moreImage.className = "action_images";
+
+        moreButton.appendChild(moreImage);
+
+        rest.appendChild(deleteForm);
+        rest.appendChild(editButton);
+        rest.appendChild(moreButton);
+
+        tr.appendChild(title);
+        tr.appendChild(rest);
+
+        animeTable.appendChild(tr);
+        })
+    }
+
+    animes.forEach(anime => {
+        let animeGenres = anime[3].split(",");
+        animeGenres = animeGenres.map(item => item.trim());
+        console.log(animeGenres);
+        if (animeGenres.includes(genre)) {
+            const tr = document.createElement("tr");
+            tr.className = ("anime_row");
+            tr.id = `anime_row_${anime[0]}`;
+            tr.dataset.idNum = `${anime[0]}`;
+            tr.dataset.genres = `${anime[3]}`;
+
+            const title = document.createElement("td");
+            title.textContent = `${anime[1]}`;
+
+            const rest = document.createElement("td");
+            rest.style.display = "flex";
+            rest.style.gap = "6px";
+
+            const deleteForm = document.createElement("form");
+            const deleteButton = document.createElement("button");
+            const deleteImage = document.createElement("img");
+
+            deleteForm.method = "POST";
+            deleteForm.action = `/delete/${anime[0]}`;
+            deleteForm.style.display = "inline";
+
+            deleteButton.type = "submit";
+            deleteButton.className = "delete_button";
+
+            deleteImage.src = "/static/icons/deleteIcon.png";
+            deleteImage.className = "action_images";
+
+            deleteButton.appendChild(deleteImage);
+            deleteForm.appendChild(deleteButton);
+
+            const editButton = document.createElement("button");
+            const editImage = document.createElement("img");
+
+            editButton.type = "button";
+            editButton.className = "edit_button";
+            editButton.dataset.idNum = `${anime[0]}`;
+            editButton.dataset.imdbid = `${anime[2]}`;
+            editButton.dataset.type = "anime";
+
+            editImage.src = "/static/icons/editIcon.png";
+            editImage.className = "action_images";
+
+            editButton.appendChild(editImage);
+
+            const moreButton = document.createElement("button");
+            const moreImage = document.createElement("img");
+
+            moreButton.type = "button";
+            moreButton.className = "more_button";
+            moreButton.dataset.idNum = `${anime[0]}`;
+            moreButton.dataset.imdbid = `${anime[2]}`;
+
+            moreImage.src = "/static/icons/moreIcon.png";
+            moreImage.className = "action_images";
+
+            moreButton.appendChild(moreImage);
+
+            rest.appendChild(deleteForm);
+            rest.appendChild(editButton);
+            rest.appendChild(moreButton);
+
+            tr.appendChild(title);
+            tr.appendChild(rest);
+
+            animeTable.appendChild(tr);
+        }
+    })
+    animeTable.appendChild(animeAddButton);
+    filter_dropdown_off();
 }
 
 /*
@@ -357,11 +896,10 @@ function add_genres() {
             else animeGenreCount[genre] = 1;
         }
     }
-
-    console.log(movieGenreCount);
-    console.log(tvShowGenreCount);
-    console.log(animeGenreCount);
 }
 function init_page() {
     add_genres();
+    render_movie_list(prevMovieGenre);
+    render_tv_show_list(prevTvShowGenre);
+    render_anime_list(prevAnimeGenre);
 }

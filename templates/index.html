@@ -7,9 +7,9 @@
         <div id="movie_list" class="list" data-movies='{{ movie_list | tojson | safe }}'>
             <h2 class="list_header"> Movies </h2>
 
-            <table>
+            <table id="movie_table" class="table">
                 <tr>
-                    <th>
+                    <th id="movie_list_header">
                         Title
                         <div class="filter_dropdown">
                             <button type="button" class="filter_button" data-type="movie">
@@ -43,7 +43,7 @@
                 </tr>
                 {% endfor %}
 
-                <tr> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
+                <tr id="movie_add_button"> <td> <button type="button" class="add_button" data-type="movie">+</button> </td> </tr>
             </table>
         </div>
 
@@ -51,9 +51,9 @@
             <h2 class="list_header">
                 TV Shows
             </h2>
-            <table>
+            <table id="tv_show_table" class="table">
                 <tr>
-                    <th>
+                    <th id="tv_show_list_header">
                         Title
                         <div class="filter_dropdown">
                             <button type="button" class="filter_button" data-type="tv_show">
@@ -87,7 +87,7 @@
                 </tr>
                 {% endfor %}
 
-                <tr> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
+                <tr id="tv_show_add_button"> <td> <button type="button" class="add_button" data-type="tv_show">+</button> </td> </tr>
             </table>
         </div>
 
@@ -95,9 +95,9 @@
             <h2 class="list_header">
                 Anime
             </h2>
-            <table>
+            <table id="anime_table" class="table">
                 <tr>
-                    <th>
+                    <th id="anime_list_header">
                         Title
                         <div class="filter_dropdown">
                             <button type="button" class="filter_button" data-type="anime">
@@ -131,7 +131,7 @@
                 </tr>
                 {% endfor %}
 
-                <tr> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
+                <tr id="anime_add_button"> <td> <button type="button" class="add_button" data-type="anime">+</button> </td> </tr>
             </table>
         </div>
     </div>
