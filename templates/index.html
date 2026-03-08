@@ -10,13 +10,25 @@
             <table id="movie_table" class="table">
                 <tr>
                     <th id="movie_list_header">
-                        Title
-                        <div class="filter_dropdown">
-                            <button type="button" class="filter_button" data-type="movie">
-                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
-                            </button>
-                            <ul class="filter_dropdown_content" id="movie_filter_dropdown_content">
-                            </ul>
+                        <div class="table_list_header">
+                            <div class="list_header_title">Title</div>
+                            <div class="list_header_buttons">
+                                <div class="sort_dropdown">
+                                    <button type="button" class="sort_button" data-type="movie">
+                                        <img src="{{ url_for('static', filename='icons/sortIconWhite.png') }}" class="sort_button_images">
+                                    </button>
+                                    <ul class="sort_dropdown_content" id="movie_sort_dropdown_content">
+                                    </ul>
+                                </div>
+
+                                <div class="filter_dropdown">
+                                    <button type="button" class="filter_button" data-type="movie">
+                                        <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                                    </button>
+                                    <ul class="filter_dropdown_content" id="movie_filter_dropdown_content">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </th>
                 </tr>
@@ -54,13 +66,25 @@
             <table id="tv_show_table" class="table">
                 <tr>
                     <th id="tv_show_list_header">
-                        Title
-                        <div class="filter_dropdown">
-                            <button type="button" class="filter_button" data-type="tv_show">
-                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
-                            </button>
-                            <ul class="filter_dropdown_content" id="tv_show_filter_dropdown_content">
-                            </ul>
+                        <div class="table_list_header">
+                            <div class="list_header_title">Title</div>
+                            <div class="list_header_buttons">
+                                <div class="sort_dropdown">
+                                    <button type="button" class="sort_button" data-type="tv_show">
+                                        <img src="{{ url_for('static', filename='icons/sortIconWhite.png') }}" class="sort_button_images">
+                                    </button>
+                                    <ul class="sort_dropdown_content" id="tv_show_sort_dropdown_content">
+                                    </ul>
+                                </div>
+
+                                <div class="filter_dropdown">
+                                    <button type="button" class="filter_button" data-type="tv_show">
+                                        <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                                    </button>
+                                    <ul class="filter_dropdown_content" id="tv_show_filter_dropdown_content">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </th>
                 </tr>
@@ -98,13 +122,25 @@
             <table id="anime_table" class="table">
                 <tr>
                     <th id="anime_list_header">
-                        Title
-                        <div class="filter_dropdown">
-                            <button type="button" class="filter_button" data-type="anime">
-                                <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
-                            </button>
-                            <ul class="filter_dropdown_content" id="anime_filter_dropdown_content">
-                            </ul>
+                        <div class="table_list_header">
+                            <div class="list_header_title">Title</div>
+                            <div class="list_header_buttons">
+                                <div class="sort_dropdown">
+                                    <button type="button" class="sort_button" data-type="anime">
+                                        <img src="{{ url_for('static', filename='icons/sortIconWhite.png') }}" class="sort_button_images">
+                                    </button>
+                                    <ul class="sort_dropdown_content" id="anime_sort_dropdown_content">
+                                    </ul>
+                                </div>
+
+                                <div class="filter_dropdown">
+                                    <button type="button" class="filter_button" data-type="anime">
+                                        <img src="{{ url_for('static', filename='icons/filterIconWhite.png') }}" class="filter_button_images">
+                                    </button>
+                                    <ul class="filter_dropdown_content" id="anime_filter_dropdown_content">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </th>
                 </tr>

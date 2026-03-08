@@ -12,15 +12,15 @@ const animeList = document.getElementById("anime_list");
 const movieTableHeader = document.getElementById("movie_list_header");
 const tvShowTableHeader = document.getElementById("tv_show_list_header");
 const animeTableHeader = document.getElementById("anime_list_header");
-const movieTable = document.getElementById("movie_table");
-const tvShowTable = document.getElementById("tv_show_table");
-const animeTable = document.getElementById("anime_table");
+const movieTable = document.getElementById("movie_table"); // HTML table element housing all rows
+const tvShowTable = document.getElementById("tv_show_table"); // HTML table element housing all rows
+const animeTable = document.getElementById("anime_table"); // HTML table element housing all rows
 const movieAddButton = document.getElementById("movie_add_button");
 const tvShowAddButton = document.getElementById("tv_show_add_button");
 const animeAddButton = document.getElementById("anime_add_button");
-const movies = JSON.parse(movieList.dataset.movies);
-const tvShows = JSON.parse(tvShowList.dataset.tvShows);
-const animes = JSON.parse(animeList.dataset.animes);
+const movies = JSON.parse(movieList.dataset.movies); // from app.py, aka from database. json list of all movies
+const tvShows = JSON.parse(tvShowList.dataset.tvShows); // from app.py, aka from database. json list of all tv_shows
+const animes = JSON.parse(animeList.dataset.animes); // from app.py, aka from database. json list of all anime
 
 document.addEventListener("click", open_action_form);
 document.addEventListener("click", open_more_info);
@@ -30,7 +30,7 @@ document.addEventListener("click", (event) => {
     if (!closeMoreInfoBtn) return;
     all_overlay_off();
     return;
-})
+}) // close more info w/ x
 document.addEventListener("click", (event) => {
     const filterBtn = event.target.closest(".filter_button");
     if(!filterBtn) return;
@@ -41,7 +41,28 @@ document.addEventListener("click", (event) => {
     if(!wasOpen) open_filter_dropdown(type);
 
     return;
-})
+}) // opens filter button + closes all others if new opened
+document.addEventListener("click", (event) => {
+    const filterContent = event.target.closest(".filter_dropdown_content");
+    const filterBtn = event.target.closest(".filter_button");
+    if (!(filterContent || filterBtn)) filter_dropdown_off();
+}) // closes if click outside filter button
+document.addEventListener("click", (event) => {
+    const sortBtn = event.target.closest(".sort_button");
+    if(!sortBtn) return;
+    const type = sortBtn.dataset.type;
+    const cur = document.getElementById(`${type}_sort_dropdown_content`);
+    const wasOpen = cur.style.display === "flex";
+    all_overlay_off();
+    if(!wasOpen) open_sort_dropdown(type);
+
+    return;
+}) // opens sort dropdown, same as for filter
+document.addEventListener("click", (event) => {
+    const sortContent = event.target.closest(".sort_dropdown_content");
+    const sortBtn = event.target.closest(".sort_button");
+    if (!(sortContent || sortBtn)) sort_dropdown_off();
+}) // closes if click outside sort button
 actionCancel.addEventListener("click", all_overlay_off);
 actionInput.addEventListener("input", function () {
     const query = actionInput.value.trim();
@@ -56,18 +77,13 @@ actionInput.addEventListener("input", function () {
     searchTimer = setTimeout(() => {
         fetch_autocomplete_results(query);
     }, 300);
-});
+}); // input in search box
 document.addEventListener("click", (event) => {
     if ((event.target == moreInfoOverlay) || (event.target == actionOverlay)) {
         all_overlay_off();
     }
-});
+}); // close_all_overlay if click outside
 document.addEventListener("DOMContentLoaded", init_page);
-document.addEventListener("click", (event) => {
-    const filterContent = event.target.closest(".filter_dropdown_content");
-    const filterBtn = event.target.closest(".filter_button");
-    if (!(filterContent || filterBtn)) filter_dropdown_off();
-})
 
 
 let overlayOpen = false;
@@ -94,12 +110,8 @@ function more_info_overlay_on() {
     overlayOpen = true;
 }
 function all_overlay_off() {
-    const dropdowns = document.getElementsByClassName("filter_dropdown_content");
-    let i = 0;
-    for (i = 0; i < dropdowns.length; i++){
-        let cur = dropdowns[i];
-        cur.style.display = "none";
-    }
+    filter_dropdown_off();
+    sort_dropdown_off();
     actionOverlay.style.display = "none";
     moreInfoOverlay.style.display = "none";
     clear_autocomplete();
@@ -107,6 +119,14 @@ function all_overlay_off() {
 }
 function filter_dropdown_off() {
     const dropdowns = document.getElementsByClassName("filter_dropdown_content");
+    let i = 0;
+    for (i = 0; i < dropdowns.length; i++){
+        let cur = dropdowns[i];
+        cur.style.display = "none";
+    }
+}
+function sort_dropdown_off() {
+    const dropdowns = document.getElementsByClassName("sort_dropdown_content");
     let i = 0;
     for (i = 0; i < dropdowns.length; i++){
         let cur = dropdowns[i];
@@ -252,6 +272,12 @@ function open_filter_dropdown(type) {
         }
     }
 }
+function open_sort_dropdown(type) {
+    const content = document.getElementById(`${type}_sort_dropdown_content`);
+    content.style.display = "flex";
+    overlayOpen = true;
+}
+
 
 /*
  * Fetching Functions
