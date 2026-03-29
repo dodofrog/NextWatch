@@ -902,7 +902,7 @@ function add_genres() {
         const idNum = movies[i][0];
         const cur = document.getElementById(`movie_row_${idNum}`);
         let genres = cur.dataset.genres.split(",");
-        for (let j = 0; j < genres.length; j++) {
+        for (let j = 0; j < genres.length; j++)     {
             const genre = genres[j].trim();
             if (genre in movieGenreCount) movieGenreCount[genre] += 1;
             else movieGenreCount[genre] = 1;

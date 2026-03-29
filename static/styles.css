@@ -184,7 +184,7 @@ table, th, td {
     text-align: center;
 }
 
-.filter_dropdown_content li {
+.filter_dropdown_content li, .sort_dropdown_content li {
     object-fit: cover;
     list-style-type: none;
     padding: 10px;
@@ -192,13 +192,18 @@ table, th, td {
     transition: background-color 0.1s;
 }
 
-.filter_dropdown_content li:hover {
+.filter_dropdown_content li:hover, .sort_dropdown_content li:hover {
     background-color: #252a2e;
     cursor: pointer;
 }
 
-.filter_button:focus {
+.filter_button:focus, .sort_button:focus {
     outline: none;
+}
+
+.sort_dropdown_content_header li:hover {
+    cursor: auto    ;
+    background-color: transparent;
 }
 
 #action_submit, #action_cancel {
