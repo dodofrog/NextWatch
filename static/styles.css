@@ -202,7 +202,7 @@ table, th, td {
 }
 
 .sort_dropdown_content_header li:hover {
-    cursor: auto    ;
+    cursor: auto;
     background-color: transparent;
 }
 
