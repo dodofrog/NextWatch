@@ -15,7 +15,3 @@ A web application for tracking movies, TV shows, and anime.
 * Add user authentication
 * Improve filtering and sorting
 * Add progress tracking
-
-## License
-
-This project is licensed under the MIT License.
