@@ -8,6 +8,7 @@ A personal project for tracking movies, TV shows, and anime. Simplifies and unif
 * Frontend: HTML, CSS, JavaScript
 * Database: SQLite
 * API: OMDb API
+* Deployed with Render temporarily at www.akshitgarg.com
 
 ## Future Improvements
 
