@@ -1,6 +1,6 @@
 # Movie Tracker App
 
-A web application for tracking movies, TV shows, and anime.
+A personal project for tracking movies, TV shows, and anime. Simplifies and unifies multilple forms of media, while offering important information at a glance
 
 ## Tech Stack
 
