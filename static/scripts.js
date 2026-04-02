@@ -357,7 +357,7 @@ function render_more_info(result, imdbid) {
 
     const link = document.createElement("a");
     link.textContent = "IMDb Page";
-    link.href = `https://www.imdb.com/title/${imdbid}/`;
+    link.href = `//www.imdb.com/title/${imdbid}/`;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
 
@@ -476,7 +476,7 @@ function render_movie_list(genre) {
         moreButton.type = "button";
         moreButton.className = "more_button";
         moreButton.dataset.idNum = `${movie[0]}`;
-        editButton.dataset.imdbid = `${movie[2]}`;
+        moreButton.dataset.imdbid = `${movie[2]}`;
 
         moreImage.src = "/static/icons/moreIcon.png";
         moreImage.className = "action_images";
@@ -627,7 +627,7 @@ function render_tv_show_list(genre) {
         moreButton.type = "button";
         moreButton.className = "more_button";
         moreButton.dataset.idNum = `${tvShow[0]}`;
-        editButton.dataset.imdbid = `${tvShow[2]}`;
+        moreButton.dataset.imdbid = `${tvShow[2]}`;
 
         moreImage.src = "/static/icons/moreIcon.png";
         moreImage.className = "action_images";

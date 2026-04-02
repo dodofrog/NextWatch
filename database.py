@@ -1,18 +1,22 @@
 # Imports
 import psycopg, os, json
+from psycopg_pool import ConnectionPool
 from dotenv import load_dotenv
 
 load_dotenv()
 
+DB_URI = os.getenv("SUPABASE_DB_URI")
+
+# keeps a "pool" of however many connections you want, and will keep them open and serve automatically as you request
+pool = ConnectionPool(
+    DB_URI,
+    min_size=2,
+    max_size=5
+)
+
 # Server connection
 def get_connection():
-    return psycopg.connect(
-        host=os.getenv("DB_HOST"),
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        port=os.getenv("DB_PORT", 5432)
-    )
+    return pool.connection()
 
 # Creates db
 def init_db():
@@ -115,7 +119,7 @@ def get_json(*args):
             result = cur.fetchone()
         if result is None:
             return None
-        return json.loads(result[0])
+        return (result[0])
 
 # UPDATE
 def update(*args):

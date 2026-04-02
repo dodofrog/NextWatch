@@ -124,7 +124,6 @@ def search_imdbid(imdbid):
 @app.route('/get_json')
 def get_json():
     imdbid = request.args.get("id", "").strip()
-
     data = database.get_json(imdbid)
     return jsonify(data)
 
@@ -148,9 +147,8 @@ def add_movie():
     if not imdbid:
         database.add_movie(movie_title)
     else:
-        movie_data = search_imdbid(imdbid)
-        movie_json = json.dumps(movie_data)
-        genres = movie_data.get("genre")
+        movie_json = search_imdbid(imdbid)
+        genres = movie_json.get("genre")
         database.add_movie(movie_title, imdbid, movie_json, genres)
 
     return redirect(url_for('index'))
@@ -163,9 +161,8 @@ def add_tv_show():
     if not imdbid:
         database.add_tv_show(tv_show_title)
     else:
-        tv_show_data = search_imdbid(imdbid)
-        tv_show_json = json.dumps(tv_show_data)
-        genres = tv_show_data.get("genre")
+        tv_show_json = search_imdbid(imdbid)
+        genres = tv_show_json.get("genre")
         database.add_tv_show(tv_show_title, imdbid, tv_show_json, genres)
 
     return redirect(url_for('index'))
@@ -178,9 +175,8 @@ def add_anime():
     if not imdbid:
         database.add_anime(anime_title)
     else:
-        anime_data = search_imdbid(imdbid)
-        anime_json = json.dumps(anime_data)
-        genres = anime_data.get("genre")
+        anime_json = search_imdbid(imdbid)
+        genres = anime_json.get("genre")
         database.add_anime(anime_title, imdbid, anime_json, genres)
 
     return redirect(url_for('index'))
