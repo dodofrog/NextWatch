@@ -1,10 +1,17 @@
 # Imports
 import psycopg, os, json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Server connection
 def get_connection():
     return psycopg.connect(
-        "dbname=nextdb user=nextwatchuser password=Ag00021() host=localhost"
+        host=os.getenv("DB_HOST"),
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        port=os.getenv("DB_PORT", 5432)
     )
 
 # Creates db
