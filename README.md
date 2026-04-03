@@ -4,7 +4,7 @@ A personal project for tracking movies, TV shows, and anime. Simplifies and unif
 ## Tech Stack
 * Backend: Python, Flask
 * Frontend: HTML, CSS, JavaScript
-* Database: SQLite
+* Database: PostgreSQL running on Supabase
 * API: OMDb API
 * Deployed with Render temporarily at www.akshitgarg.com
 
