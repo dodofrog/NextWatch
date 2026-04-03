@@ -12,7 +12,8 @@ pool = ConnectionPool(
     DB_URI,
     min_size=2,
     max_size=5,
-    check=ConnectionPool.check_connection
+    check=ConnectionPool.check_connection,
+    kwargs={"prepare_threshold": None}
 )
 
 # Server connection
