@@ -11,7 +11,8 @@ DB_URI = os.getenv("SUPABASE_DB_URI")
 pool = ConnectionPool(
     DB_URI,
     min_size=2,
-    max_size=5
+    max_size=5,
+    check=ConnectionPool.check_connection
 )
 
 # Server connection
