@@ -9,7 +9,8 @@ A personal project for tracking movies, TV shows, and anime. Simplifies and unif
 * Deployed with Render temporarily at www.akshitgarg.com
 
 ## Future Improvements
-* Migrate to a production database (PostgreSQL or Supabase)
+* Create React frontend
+* Experiment with node js
 * Add user authentication
 * Improve filtering and sorting
 * Add progress tracking
