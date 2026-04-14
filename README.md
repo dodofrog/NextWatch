@@ -6,7 +6,7 @@ A personal project for tracking movies, TV shows, and anime. Simplifies and unif
 * Frontend: HTML, CSS, JavaScript
 * Database: PostgreSQL running on Supabase
 * API: OMDb API
-* Deployed with Render at [nextwatch.akshitgarg.com](nextwatch.akshitgarg.com)
+* Deployed with Render at [nextwatch.akshitgarg.com](https://nextwatch.akshitgarg.com/)
 
 ## Future Improvements
 * Create React frontend
